@@ -57,15 +57,11 @@ services:
 
   wp_vue3:
     container_name: wp_vue3
-    image: node:alpine
+    image: node:14-alpine
     volumes:
-      - ./frontend:/project
-    ports:
-      - 8000:8000
-    command: cd project && npm install && npm run start:dev
-    env_file:
-      - .env
-
+      - ./frontend:/home/node/app/
+    working_dir: /home/node/app/
+    command: sh ./.startnode.sh
   wp_go:
     container_name: wp_go
     image: golang:alpine
@@ -73,6 +69,6 @@ services:
       - ./backend/go:/project
     ports:
       - 9002:9002
-    command: cd project && go mod download && go run app.go
+        #  command: cd project && go mod download && go run app.go
     depends_on: 
-      - dḅ̣
+      - db
