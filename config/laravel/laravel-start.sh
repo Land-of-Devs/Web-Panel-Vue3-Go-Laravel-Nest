@@ -1,20 +1,9 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
 
 if [ ! -e /tmp/installed ]; then
-    apt-get update
-    apt-get -y install git libicu-dev libonig-dev libzip-dev unzip locales
-    apt-get clean
-    rm -rf /var/lib/apt/lists/*
+    sudo sed -i 's/;extension=pdo_pgsql/extension=pdo_pgsql/g; s/;extension=pgsql/extension=pgsql/g;' /opt/bitnami/php/etc/php.ini*
 
-    locale-gen en_US.UTF-8
-    localedef -f UTF-8 -i en_US en_US.UTF-8
-    mkdir -p /var/run/php-fpm
-    
-    docker-php-ext-install intl pdo_mysql zip bcmath
     touch installed
 fi
 
-cd /project
-composer config -g process-timeout 3600
-composer config -g repos.packagist composer https://packagist.org
+exec /app-entrypoint.sh php artisan serve --host=0.0.0.0 --port=3000

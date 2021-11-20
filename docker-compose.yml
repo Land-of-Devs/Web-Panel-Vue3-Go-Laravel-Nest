@@ -47,15 +47,17 @@ services:
   wp_laravel:
     tty: true
     container_name: wp_laravel
+    user: "1000:1000"
     image: docker.io/bitnami/laravel:8
+    command: sh /pre-app-entrypoint.sh
     volumes:
       - ./backend/laravel:/app
+      - ./config/laravel/pgsql.ini:/opt/bitnami/php/etc/php-fpm.d/pgsql.ini
+      - ./config/laravel/laravel-start.sh:/pre-app-entrypoint.sh
     env_file:
       - .env
     depends_on:
       - db
-    ports:
-      - 9003-9003
 
   wp_vue3:
     container_name: wp_vue3
@@ -73,8 +75,6 @@ services:
       - ./config/go:/projectcfg
     env_file:
       - .env
-    #ports:
-    #  - 9002:9002
     command: sh /projectcfg/go-start.sh
     depends_on: 
       - db
