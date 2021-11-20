@@ -21,7 +21,7 @@ services:
     container_name: "wp_web"
     ports:
       - "80:80"
-      - "443:443"
+      # - "443:443"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
@@ -29,6 +29,8 @@ services:
       - wp_nest
       - wp_vue3
       - wp_laravel
+      - wp_go
+
   wp_nest:
     container_name: wp_nest
     image: node:alpine
@@ -62,13 +64,17 @@ services:
       - ./frontend:/home/node/app/
     working_dir: /home/node/app/
     command: sh ./.startnode.sh
+
   wp_go:
     container_name: wp_go
     image: golang:alpine
     volumes:
       - ./backend/go:/project
-    ports:
-      - 9002:9002
-        #  command: cd project && go mod download && go run app.go
+      - ./config/go:/projectcfg
+    env_file:
+      - .env
+    #ports:
+    #  - 9002:9002
+    command: sh /projectcfg/go-start.sh
     depends_on: 
       - db

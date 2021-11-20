@@ -1,6 +1,7 @@
 module.exports = {
   devServer: {
     disableHostCheck: true,
-    sockPath: "/dev/sockjs-node"
+    sockPath: "/dev/sockjs-node",
+    progress: false
   },
 };
