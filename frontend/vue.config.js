@@ -4,4 +4,6 @@ module.exports = {
     sockPath: "/dev/sockjs-node",
     progress: false
   },
+
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/dev/'
 };
