@@ -11,6 +11,8 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=landofdevs@protonmail.com
       - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_DISABLE_POSTFIX=1
+      - GUNICORN_ACCESS_LOGFILE=/dev/null
     container_name: "wp_db_admin"
     depends_on: 
       - db
@@ -35,10 +37,10 @@ services:
     container_name: wp_nest
     image: node:alpine
     volumes:
-      - ./backend/nestjs:/project
-    ports:
-      - 9001:9001
-    command: cd project && npm install && npm run start:dev
+      - ./backend/nestjs:/home/node/app/
+      - ./config/startnode.sh:/startnode.sh:ro
+    working_dir: /home/node/app/
+    command: sh /startnode.sh
     env_file:
       - .env
     depends_on:
@@ -47,13 +49,11 @@ services:
   wp_laravel:
     tty: true
     container_name: wp_laravel
-    user: "1000:1000"
     image: docker.io/bitnami/laravel:8
-    command: sh /pre-app-entrypoint.sh
+    entrypoint: sh /pre-app-entrypoint.sh
     volumes:
       - ./backend/laravel:/app
-      - ./config/laravel/pgsql.ini:/opt/bitnami/php/etc/php-fpm.d/pgsql.ini
-      - ./config/laravel/laravel-start.sh:/pre-app-entrypoint.sh
+      - ./config/startlaravel.sh:/pre-app-entrypoint.sh:ro
     env_file:
       - .env
     depends_on:
@@ -64,17 +64,18 @@ services:
     image: node:14-alpine
     volumes:
       - ./frontend:/home/node/app/
+      - ./config/startnode.sh:/startnode.sh:ro
     working_dir: /home/node/app/
-    command: sh ./.startnode.sh
+    command: sh /startnode.sh
 
   wp_go:
     container_name: wp_go
     image: golang:alpine
     volumes:
       - ./backend/go:/project
-      - ./config/go:/projectcfg
+      - ./config/startgo.sh:/startgo.sh:ro
     env_file:
       - .env
-    command: sh /projectcfg/go-start.sh
+    command: sh /startgo.sh
     depends_on: 
       - db
