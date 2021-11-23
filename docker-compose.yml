@@ -34,7 +34,7 @@ services:
       - wp_go
 
   wp_nest:
-    container_name: wp_nest
+    container_name: "wp_nest"
     image: node:alpine
     volumes:
       - ./backend/nestjs:/home/node/app/
@@ -48,9 +48,9 @@ services:
 
   wp_laravel:
     tty: true
-    container_name: wp_laravel
+    container_name: "wp_laravel"
     image: docker.io/bitnami/laravel:8
-    entrypoint: sh /pre-app-entrypoint.sh
+    entrypoint: sudo -E sh /pre-app-entrypoint.sh
     volumes:
       - ./backend/laravel:/app
       - ./config/startlaravel.sh:/pre-app-entrypoint.sh:ro
@@ -60,7 +60,7 @@ services:
       - db
 
   wp_vue3:
-    container_name: wp_vue3
+    container_name: "wp_vue3"
     image: node:14-alpine
     volumes:
       - ./frontend:/home/node/app/
@@ -69,7 +69,7 @@ services:
     command: sh /startnode.sh
 
   wp_go:
-    container_name: wp_go
+    container_name: "wp_go"
     image: golang:alpine
     volumes:
       - ./backend/go:/project
