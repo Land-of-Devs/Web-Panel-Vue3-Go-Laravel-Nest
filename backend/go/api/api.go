@@ -1,7 +1,7 @@
 package api
 
 import (
-	apiv1 "webpanel/api/v1"
+	"webpanel/api/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,6 +9,6 @@ import (
 func InitRoutes(r *gin.Engine) {
 	{
 		ctx := r.Group("/api/admin")
-		apiv1.InitRoutes(ctx)
+		auth.InitRoutes(ctx)
 	}
 }

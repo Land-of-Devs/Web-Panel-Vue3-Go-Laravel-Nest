@@ -3,8 +3,13 @@ module webpanel
 go 1.17
 
 require (
-	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.7.4
+	gorm.io/driver/postgres v1.2.2
+	gorm.io/gorm v1.22.3
+)
+
+require (
+	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
@@ -30,6 +35,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/postgres v1.2.2
-	gorm.io/gorm v1.22.3
 )
