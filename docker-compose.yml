@@ -43,6 +43,7 @@ services:
     command: sh /startnode.sh
     env_file:
       - .env
+      - config/private/${ENV:-dev}/secrets.env
     depends_on:
       - db
 
@@ -56,6 +57,7 @@ services:
       - ./config/startlaravel.sh:/pre-app-entrypoint.sh:ro
     env_file:
       - .env
+      - config/private/${ENV:-dev}/secrets.env
     depends_on:
       - db
 
@@ -73,9 +75,11 @@ services:
     image: golang:alpine
     volumes:
       - ./backend/go:/project
+      - ./config/private/${ENV:-dev}
       - ./config/startgo.sh:/startgo.sh:ro
     env_file:
       - .env
+      - config/private/${ENV:-dev}/secrets.env
     command: sh /startgo.sh
     depends_on: 
       - db
