@@ -6,6 +6,7 @@ import (
 	"webpanel/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -21,20 +22,6 @@ func handleError(c *gin.Context, err error) {
 			"error": err,
 		})
 	}
-}
-
-type Tag struct {
-	Name        string `json:"name" form:"name" binding:"required"`
-	Description string `json:"description" form:"description" binding:"required"`
-	ExtraData   string `json:"extra"`
-}
-
-func Users(c *gin.Context) {
-	users := []Tag{{Name: "a", Description: ""}}
-
-	c.JSON(200, gin.H{
-		"users": users,
-	})
 }
 
 func UpgradeTokenToAdmin(c *gin.Context) {
@@ -60,4 +47,47 @@ func UpgradeTokenToAdmin(c *gin.Context) {
 	}
 
 	fmt.Printf("token: %v\n", token)
+}
+
+func UsersCreation(c *gin.Context) {
+	userModelValidator := NewUserModelValidator()
+
+	if err := userModelValidator.Bind(c); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, utils.NewValidatorError(err))
+		return
+	}
+
+	if err := SaveOne(&userModelValidator.userModel); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, utils.NewError("database", err))
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"user": Serialize(userModelValidator.userModel)})
+}
+
+func UserUpdate(c *gin.Context) {
+	myUserModel := c.MustGet("my_user_model").(UserModel)
+	userModelValidator := NewUserModelValidatorFillWith(myUserModel)
+	if err := userModelValidator.Bind(c); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, utils.NewValidatorError(err))
+		return
+	}
+
+	userModelValidator.userModel.ID = myUserModel.ID
+	if err := myUserModel.Update(userModelValidator.userModel); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, utils.NewError("database", err))
+		return
+	}
+
+	myUserModel = updateContextUserModel(c, myUserModel.ID)
+	c.JSON(http.StatusOK, gin.H{"user": Serialize(myUserModel)})
+}
+
+func updateContextUserModel(c *gin.Context, id uuid.UUID) UserModel {
+	newUserContext, err := FindOneUser(UserModel{ID: id})
+	if err != nil {
+		panic(err)
+	}
+	c.Set("my_user_model", newUserContext)
+	return newUserContext
 }

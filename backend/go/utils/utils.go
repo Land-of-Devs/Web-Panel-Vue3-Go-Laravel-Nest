@@ -3,6 +3,8 @@ package utils
 import (
 	"bufio"
 	"os"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/gin-gonic/gin"
 )
 
 func ReadFileBytes(filename string) ([]byte, error) {
@@ -26,4 +28,9 @@ func ReadFileBytes(filename string) ([]byte, error) {
 	_, err = bufr.Read(bytes)
 
 	return bytes, err
+}
+
+func Bind(c *gin.Context, obj interface{}) error {
+	b := binding.Default(c.Request.Method, c.ContentType())
+	return c.ShouldBindWith(obj, b)
 }

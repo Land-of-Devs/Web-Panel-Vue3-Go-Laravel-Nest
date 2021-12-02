@@ -9,7 +9,6 @@ import (
 func InitRoutes(r *gin.RouterGroup) {
 	{
 		ctx := r.Group("/auth")
-		ctx.GET("/users", users.Users)
 		ctx.GET("/admin-session-upgrade", users.UpgradeTokenToAdmin)
 	}
 }

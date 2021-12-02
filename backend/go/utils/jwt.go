@@ -4,7 +4,6 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"os"
-
 	"github.com/golang-jwt/jwt"
 )
 
