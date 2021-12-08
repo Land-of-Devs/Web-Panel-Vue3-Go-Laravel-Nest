@@ -23,6 +23,13 @@ type UserModel struct {
 	Verify       bool      `gorm:"column:verify"`
 	PasswordHash string    `gorm:"column:password;not null"`
 }
+type Tabler interface {
+  TableName() string
+}
+
+func (UserModel) TableName() string {
+  return "users"
+}
 
 // Migrate the schema of database if needed
 func Setup() {
@@ -32,9 +39,9 @@ func Setup() {
 }
 
 func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
-  id, err := uuid.NewV4();
-  u.ID = id
-  return
+	id, err := uuid.NewV4()
+	u.ID = id
+	return
 }
 
 func (u *UserModel) setPassword(password string) error {
@@ -55,26 +62,24 @@ func FindOneUser(condition interface{}) (UserModel, error) {
 	return model, err
 }
 
-func DeleteUsers(uuids []uuid.UUID){
+func DeleteUsers(uuids []uuid.UUID) {
 	db := db.GetConnection()
 	var model UserModel
 	db.Delete(&model, uuids)
 }
 
-func FindAllUsers(c *gin.Context) ([]UserModel, error){
+func FindAllUsers(c *gin.Context) ([]UserModel, error) {
 	db := db.GetConnection()
-
 	var arrModel []UserModel
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
-	
+
 	err := db.Scopes(utils.Paginate(page, pageSize)).Find(&arrModel).Error
-	return arrModel, err;
+	return arrModel, err
 }
 
 func SaveOne(data interface{}) error {
 	db := db.GetConnection()
-
 	err := db.Save(data).Error
 	return err
 }
