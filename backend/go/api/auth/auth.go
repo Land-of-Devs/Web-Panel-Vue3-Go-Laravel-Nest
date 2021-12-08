@@ -2,7 +2,6 @@ package auth
 
 import (
 	"webpanel/core/users"
-
 	"github.com/gin-gonic/gin"
 )
 

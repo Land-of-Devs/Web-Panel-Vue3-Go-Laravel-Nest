@@ -18,11 +18,10 @@ func main() {
 	)
 
 	migrate()
-
 	r := gin.Default()
 	api.InitRoutes(r)
-
 	r.Run("0.0.0.0:8080")
+
 }
 
 func migrate() {

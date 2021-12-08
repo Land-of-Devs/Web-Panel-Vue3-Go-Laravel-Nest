@@ -21,11 +21,11 @@ type UserModelValidator struct {
 		Role     uint8  `form:"role,default=1" json:"role" binding:"gte=1,lte=3"`
 		Verify   bool   `form:"verify" json:"verify" default:"false"`
 	} `json:"user"`
-	userModel UserModel `json:"-"`
+	userModel       UserModel `json:"-"`
+	oldPasswordHash string
 }
 
 func (userMV *UserModelValidator) Bind(c *gin.Context) error {
-
 	err := utils.Bind(c, userMV)
 	if err != nil {
 		return err
@@ -36,9 +36,10 @@ func (userMV *UserModelValidator) Bind(c *gin.Context) error {
 	userMV.userModel.Role = userMV.User.Role
 	userMV.userModel.Verify = userMV.User.Verify
 
-	if userMV.User.Password != "" {
+	if userMV.User.Password != userMV.oldPasswordHash {
 		userMV.userModel.setPassword(userMV.User.Password)
 	}
+
 	if userMV.User.Image != "" {
 		userMV.userModel.Image = &userMV.User.Image
 	}
@@ -58,7 +59,8 @@ func NewUserModelValidatorFillWith(userModel UserModel) UserModelValidator {
 	userModelValidator.User.Email = userModel.Email
 	userModelValidator.User.Role = userModel.Role
 	userModelValidator.User.Verify = userModel.Verify
-	userModelValidator.User.Password = ""
+	userModelValidator.User.Password = userModel.PasswordHash
+	userModelValidator.oldPasswordHash = userModel.PasswordHash
 
 	if userModel.Image != nil {
 		userModelValidator.User.Image = *userModel.Image

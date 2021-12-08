@@ -2,8 +2,12 @@ package users
 
 import (
 	"errors"
+	"strconv"
 	"webpanel/db"
 
+	"webpanel/utils"
+
+	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -11,9 +15,9 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	ID           uuid.UUID `gorm:"uuid;primary_key;default:uuid_generate_v3()"`
+	ID           uuid.UUID `gorm:"uuid;primary_key"`
 	Username     string    `gorm:"column:username"`
-	Email        string    `gorm:"column:email;unique_index"`
+	Email        string    `gorm:"unique;column:email;"`
 	Image        *string   `gorm:"column:image"`
 	Role         uint8     `gorm:"column:role"`
 	Verify       bool      `gorm:"column:verify"`
@@ -49,6 +53,23 @@ func FindOneUser(condition interface{}) (UserModel, error) {
 	var model UserModel
 	err := db.Where(condition).First(&model).Error
 	return model, err
+}
+
+func DeleteUsers(uuids []uuid.UUID){
+	db := db.GetConnection()
+	var model UserModel
+	db.Delete(&model, uuids)
+}
+
+func FindAllUsers(c *gin.Context) ([]UserModel, error){
+	db := db.GetConnection()
+
+	var arrModel []UserModel
+	page, _ := strconv.Atoi(c.Query("page"))
+	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	
+	err := db.Scopes(utils.Paginate(page, pageSize)).Find(&arrModel).Error
+	return arrModel, err;
 }
 
 func SaveOne(data interface{}) error {

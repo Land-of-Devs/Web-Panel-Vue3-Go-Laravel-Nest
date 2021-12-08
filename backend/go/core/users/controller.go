@@ -1,6 +1,7 @@
 package users
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"webpanel/utils"
@@ -66,7 +67,12 @@ func UsersCreation(c *gin.Context) {
 }
 
 func UserUpdate(c *gin.Context) {
-	myUserModel := c.MustGet("my_user_model").(UserModel)
+	myUserModel, err := FindOneUser(UserModel{ID: uuid.FromStringOrNil(c.Param("uuid"))})
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
 	userModelValidator := NewUserModelValidatorFillWith(myUserModel)
 	if err := userModelValidator.Bind(c); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, utils.NewValidatorError(err))
@@ -79,15 +85,30 @@ func UserUpdate(c *gin.Context) {
 		return
 	}
 
-	myUserModel = updateContextUserModel(c, myUserModel.ID)
 	c.JSON(http.StatusOK, gin.H{"user": Serialize(myUserModel)})
 }
 
-func updateContextUserModel(c *gin.Context, id uuid.UUID) UserModel {
-	newUserContext, err := FindOneUser(UserModel{ID: id})
+func UserList(c *gin.Context) {
+	myUserModels, err := FindAllUsers(c)
 	if err != nil {
-		panic(err)
+		c.Status(http.StatusNotFound)
+		return
 	}
-	c.Set("my_user_model", newUserContext)
-	return newUserContext
+
+	c.JSON(http.StatusOK, gin.H{"users": MultipleSerialize(myUserModels)})
+}
+
+func UserDelete(c *gin.Context) {
+	data, err := utils.ParseJSON(c)
+	var uuids struct {
+		Uuids []uuid.UUID
+	}
+	json.Unmarshal(data, &uuids)
+
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
+	DeleteUsers(uuids.Uuids)
 }

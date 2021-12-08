@@ -13,6 +13,10 @@ type UserResponse struct {
 	Role     int8      `json:"role"`
 }
 
+type UsersResponse struct {
+	Users []UserResponse
+}
+
 func Serialize(myUserModel UserModel) UserResponse {
 	user := UserResponse{
 		ID:       myUserModel.ID,
@@ -24,4 +28,13 @@ func Serialize(myUserModel UserModel) UserResponse {
 	}
 
 	return user
+}
+
+func MultipleSerialize(UsersModel []UserModel) []UserResponse {
+	users := []UserResponse{}
+	for _, user := range UsersModel {
+		user := Serialize(user)
+		users = append(users, user)
+	}
+	return users
 }
