@@ -5,5 +5,4 @@ if ! which gow &>/dev/null; then
 fi
 
 cd /project
-#go mod download
-gow run .
+exec gow run .

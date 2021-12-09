@@ -2,8 +2,15 @@ package utils
 
 import (
 	"fmt"
+
 	validator "github.com/go-playground/validator/v10"
 )
+
+type ErrForbidden struct{}
+
+func (e *ErrForbidden) Error() string {
+	return "Forbidden"
+}
 
 type UtilsError struct {
 	Errors map[string]interface{} `json:"errors"`

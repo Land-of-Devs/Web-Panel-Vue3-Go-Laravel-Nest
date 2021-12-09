@@ -4,13 +4,43 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"os"
+	"time"
+
+	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 )
+
+type SessionTokenData struct {
+	UserId           uuid.UUID
+	StaffAccessToken int64
+	AdminAccessToken int64
+	jwt.StandardClaims
+}
 
 var (
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
 )
+
+func CreateMainToken(data SessionTokenData) (string, error) {
+	data.StandardClaims = jwt.StandardClaims{
+		ExpiresAt: time.Now().Unix() + 60*60*24*2, /* 2 days */
+		Issuer:    "WPGo",
+	}
+
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("RS256"), data)
+	return token.SignedString(GetJwtMainPrivateKey())
+}
+
+func ParseMainToken(token string) (*jwt.Token, error) {
+	return jwt.ParseWithClaims(token, &SessionTokenData{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+
+		return GetJwtMainPublicKey(), nil
+	})
+}
 
 func GetJwtMainPrivateKey() *rsa.PrivateKey {
 	var bytes []byte

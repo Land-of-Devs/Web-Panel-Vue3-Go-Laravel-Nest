@@ -38,6 +38,8 @@ services:
     image: node:alpine
     volumes:
       - ./backend/nestjs:/home/node/app/
+      - ./data:/app_data
+      - ./config/private/${ENV:-dev}:/private/
       - ./config/startnode.sh:/startnode.sh:ro
     working_dir: /home/node/app/
     command: sh /startnode.sh
@@ -54,6 +56,8 @@ services:
     entrypoint: sudo -E sh /pre-app-entrypoint.sh
     volumes:
       - ./backend/laravel:/app
+      - ./data:/app_data
+      - ./config/private/${ENV:-dev}:/private/
       - ./config/startlaravel.sh:/pre-app-entrypoint.sh:ro
     env_file:
       - .env
@@ -66,6 +70,7 @@ services:
     image: node:14-alpine
     volumes:
       - ./frontend:/home/node/app/
+      - ./data:/app_data
       - ./config/startnode.sh:/startnode.sh:ro
     working_dir: /home/node/app/
     command: sh /startnode.sh
@@ -75,7 +80,8 @@ services:
     image: golang:alpine
     volumes:
       - ./backend/go:/project
-      - ./config/private/${ENV:-dev}
+      - ./data:/app_data
+      - ./config/private/${ENV:-dev}:/private/
       - ./config/startgo.sh:/startgo.sh:ro
     env_file:
       - .env
