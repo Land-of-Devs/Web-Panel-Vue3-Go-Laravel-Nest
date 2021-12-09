@@ -1,6 +1,6 @@
 version: "3"  
 services:
-  db:
+  wp_db:
     image: postgres:alpine
     container_name: "wp_db"
     environment:
@@ -15,7 +15,7 @@ services:
       - GUNICORN_ACCESS_LOGFILE=/dev/null
     container_name: "wp_db_admin"
     depends_on: 
-      - db
+      - wp_db
     volumes:
       - ./config/pgadmin.json:/pgadmin4/servers.json
   web:
@@ -47,7 +47,7 @@ services:
       - .env
       - config/private/${ENV:-dev}/secrets.env
     depends_on:
-      - db
+      - wp_db
 
   wp_laravel:
     tty: true
@@ -63,7 +63,7 @@ services:
       - .env
       - config/private/${ENV:-dev}/secrets.env
     depends_on:
-      - db
+      - wp_db
 
   wp_vue3:
     container_name: "wp_vue3"
@@ -88,4 +88,4 @@ services:
       - config/private/${ENV:-dev}/secrets.env
     command: sh /startgo.sh
     depends_on: 
-      - db
+      - wp_db

@@ -1,10 +1,22 @@
+import { UserEntity } from './core/entities/user.entity';
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AccessModule } from './access/access.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import dbconf from './db.conf';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { CoreModule } from './core/core.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(dbconf), 
+    CoreModule,
+    AccessModule
+  ],
+
+  providers: [
+
+  ],
+  exports: [
+  ]
 })
-export class AppModule {}
+export class UserModule {}

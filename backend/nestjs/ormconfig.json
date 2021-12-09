@@ -1,0 +1,9 @@
+{
+  "type": "postgres",
+  "host": "wp_db",
+  "port": 5432,
+  "username": "postgres",
+  "password": "password",
+  "database": "web_panel",
+  "synchronize": true
+}
