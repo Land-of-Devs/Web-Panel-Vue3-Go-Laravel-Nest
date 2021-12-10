@@ -19,13 +19,15 @@ export class AccessService {
 
   async validateUserPassword(dto: SigninDto): Promise<UserEntity> {
     const user = await this.usersService.getByEmail(dto.email);
-    const valid = await user.validatePassword(dto.password);
+    if (user) {
+      const valid = await user.validatePassword(dto.password);
 
-    if (valid) {
-      return user;
-    } else {
-      throw new ForbiddenException('Invalid email or password');
+      if (valid) {
+        return user;
+      } 
     }
+
+    throw new ForbiddenException('Invalid email or password');
   }
 
   async createUser(dto: SignupDto) {
