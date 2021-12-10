@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { TcpOptions, Transport } from '@nestjs/microservices';
+import * as cookieParser from 'cookie-parser';
 import { UserModule } from './app.module';
 
 async function bootstrap() {
@@ -9,6 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({transform: true})
   );
+  app.use(cookieParser());
   await app.listen(3000);
 }
 bootstrap();

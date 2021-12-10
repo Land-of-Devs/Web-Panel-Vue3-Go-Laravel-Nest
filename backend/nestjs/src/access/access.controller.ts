@@ -1,23 +1,31 @@
 import { SigninDto } from './dto/signin.dto';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Post, Res } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
-import { UserService } from 'src/core/services/user.service';
+import { Response } from 'express';
+import { AccessService } from './access.service';
 
 @Controller('access')
 export class AccessController {
 
-  constructor(private userService: UserService) {
+  constructor(
+    private accessService: AccessService
+  ) {
 
   }
 
   @Post('signin')
-  signin(@Body() signinData: SigninDto) {
-    return 'a';
-    
+  async signin(@Body() signinDto: SigninDto, @Res() res: Response) {
+    const user = await this.accessService.validateUserPassword(signinDto);
+    delete user.password;
+    res.cookie('token', this.accessService.generateAccessToken(user.id));
+    res.json(user);
   }
 
   @Post('signup')
-  signup(@Body() signupData: SignupDto) {
-    this.userService.new(signupData);
+  async signup(@Body() signupDto: SignupDto, @Res() res: Response) {
+    const user = await this.accessService.createUser(signupDto);
+    delete user.password;
+    res.cookie('token', this.accessService.generateAccessToken(user.id));
+    res.json(user);
   }
 }

@@ -1,28 +1,34 @@
 import { randomUUID } from 'node:crypto';
-import { UserEntity } from './../entities/user.entity';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { SignupDto } from 'src/access/dto/signup.dto';
-import * as bcrypt from 'bcrypt';
+import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(@InjectRepository(UserEntity) private userRepo: Repository<UserEntity>) {}
 
-  get(username) {
-    this.userRepo.findOne({username});
+  async getByUUID(id: string): Promise<UserEntity> {
+    return await this.userRepo.findOne({id});
   }
 
-  new(dto: SignupDto) {
-    const newUser = new UserEntity();
-    newUser.id = randomUUID();
-    newUser.username = dto.username;
-    newUser.email = dto.email;
-    newUser.role = 0;
-    newUser.password = bcrypt.hashSync(dto.password, 5);
-    newUser.verify = false;
+  async getByEmail(email: string) {
+    return await this.userRepo.findOne({email});
+  }
+
+  async create(email: string, username: string, password: string): Promise<UserEntity> {
+    const newUser = new UserEntity(email, username, password);
     
-    newUser.save();
+    try {
+      await newUser.save();
+    } catch(e) {
+      if (e.code == 23505 && e.constraint == 'users_email_key') {
+        throw new BadRequestException('Email already taken');
+      }
+      throw e;
+    }
+     
+    return newUser;
   }
 }
