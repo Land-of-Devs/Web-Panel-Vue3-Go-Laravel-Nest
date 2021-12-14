@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 	"webpanel/core/users"
-	"webpanel/db"
 	"webpanel/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -81,12 +81,19 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 		hasAdminUpgrade := now < data.AdminAccessToken
 		hasStaffUpgrade := now < data.StaffAccessToken
 
-		/* Get the user of this token from the DB */
-		db := db.GetConnection()
-		user := users.UserModel{ID: data.UserId}
-		db.Where(&user).First(&user)
+		usrUuid, err := uuid.FromString(data.Subject)
 
-		if user.ID.IsNil() {
+		if err != nil {
+			handleTokenError(optional, token, c, jwt.ValidationError{
+				Errors: jwt.ValidationErrorClaimsInvalid,
+			}, true)
+			return
+		}
+
+		/* Get the user of this token from the DB */
+		user, err := users.FindOneUser(users.UserModel{ID: usrUuid})
+
+		if err != nil {
 			handleTokenError(optional, token, c, jwt.ValidationError{
 				Errors: jwt.ValidationErrorClaimsInvalid,
 			}, true)

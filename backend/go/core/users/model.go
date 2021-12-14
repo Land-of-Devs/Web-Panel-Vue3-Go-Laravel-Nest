@@ -2,6 +2,8 @@ package users
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"strconv"
 	"webpanel/db"
 
@@ -15,20 +17,19 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	ID           uuid.UUID `gorm:"type:uuid;primary_key"`
-	Username     string    `gorm:"column:username"`
-	Email        string    `gorm:"unique;column:email;"`
-	Image        *string   `gorm:"column:image"`
-	Role         uint8     `gorm:"column:role"`
-	Verify       bool      `gorm:"column:verify"`
-	PasswordHash string    `gorm:"column:password;not null"`
-}
-type Tabler interface {
-  TableName() string
+	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
+	Username      string    `gorm:"uniqueIndex:userIdx;column:username"`
+	Hash          int       `gorm:"uniqueIndex:userIdx;column:hash"`
+	Email         string    `gorm:"unique;column:email;"`
+	Image         *string   `gorm:"column:image"`
+	Role          uint8     `gorm:"column:role"`
+	Verify        bool      `gorm:"column:verify"`
+	PasswordHash  string    `gorm:"column:password;not null"`
+	TwoStepSecret string    `gorm:"column:two_step_secret"`
 }
 
 func (UserModel) TableName() string {
-  return "users"
+	return "users"
 }
 
 // Migrate the schema of database if needed
@@ -36,6 +37,58 @@ func Setup() {
 	db := db.GetConnection()
 
 	db.AutoMigrate(&UserModel{})
+
+	db.Exec(`
+	CREATE OR REPLACE FUNCTION hash_user_update()
+		RETURNS trigger
+		LANGUAGE plpgsql
+	AS $$
+	BEGIN
+		WITH taken_hashes AS (
+			SELECT hash FROM users
+			WHERE username = NEW.username
+			ORDER BY hash),
+		max_hash AS (
+			SELECT coalesce(th.hash, 0) AS max_hash
+			FROM (VALUES (0)) AS h(hash)
+			LEFT JOIN taken_hashes AS th ON 1=1
+			ORDER BY th.hash DESC LIMIT 1),
+		avail_hashes AS (
+			SELECT hash FROM max_hash AS m, generate_series(0, coalesce(m.max_hash + 1, 0)) AS nums(hash)
+			WHERE hash NOT IN (SELECT hash FROM taken_hashes))
+		SELECT hash INTO NEW.hash
+		FROM avail_hashes
+		ORDER BY hash
+		LIMIT 1;
+
+		RETURN NEW;
+	END;
+	$$;
+	`)
+
+	db.Exec(`
+	CREATE OR REPLACE TRIGGER detect_hash_user_update_biu
+	BEFORE INSERT OR UPDATE ON users
+	FOR EACH ROW
+	EXECUTE PROCEDURE hash_user_update()
+	`)
+
+	if gin.Mode() == gin.DebugMode {
+		fmt.Println("-- CREATING DUMMY DEBUG ADMIN USER!! Login: admin:admin, 2fa secret: 0000 0000 0000 0000 0000")
+		adm := UserModel{
+			Role:          uint8(Admin),
+			Username:      "admin",
+			Email:         os.Getenv("DEBUG_MAIL"),
+			Verify:        true,
+			TwoStepSecret: "00000000000000000000",
+			Image:         nil,
+		}
+
+		adm.setPassword("admin")
+		if err := SaveOne(&adm); err != nil {
+			fmt.Printf("error creating dummy admin: %v", err)
+		}
+	}
 }
 
 func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
@@ -79,13 +132,13 @@ func FindAllUsers(c *gin.Context) ([]UserModel, error) {
 	return arrModel, err
 }
 
-func SaveOne(data interface{}) error {
+func SaveOne(data *UserModel) error {
 	db := db.GetConnection()
 	err := db.Save(data).Error
 	return err
 }
 
-func (model *UserModel) Update(data interface{}) error {
+func (model *UserModel) Update(data UserModel) error {
 	db := db.GetConnection()
 	err := db.Model(model).Updates(data).Error
 	return err

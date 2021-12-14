@@ -36,10 +36,10 @@ export class AccessService {
   
   generateAccessToken(id: string) {
     return this.jwtService.sign({
-      UserId: id,
-      AdminAccessToken: 0,
-      StaffAccessToken: 0
-    } as JWTPayload); 
+      AdminAccessToken: 0
+    } as JWTPayload, {
+      subject: id
+    }); 
   }
 
 }

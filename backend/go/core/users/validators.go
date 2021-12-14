@@ -22,7 +22,7 @@ type UserModelValidator struct {
 		Verify   bool   `form:"verify" json:"verify" default:"false"`
 	} `json:"user"`
 	userModel       UserModel `json:"-"`
-	oldPasswordHash string
+	oldPasswordHash string    `json:"-"`
 }
 
 func (userMV *UserModelValidator) Bind(c *gin.Context) error {
