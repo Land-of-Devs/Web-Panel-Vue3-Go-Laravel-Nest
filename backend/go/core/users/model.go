@@ -15,7 +15,7 @@ import (
 
 type UserModel struct {
 	gorm.Model
-	ID           uuid.UUID `gorm:"uuid;primary_key"`
+	ID           uuid.UUID `gorm:"type:uuid;primary_key"`
 	Username     string    `gorm:"column:username"`
 	Email        string    `gorm:"unique;column:email;"`
 	Image        *string   `gorm:"column:image"`

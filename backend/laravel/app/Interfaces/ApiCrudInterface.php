@@ -5,7 +5,7 @@ interface ApiCrudInterface {
 
 
     public function all();
-
+    
     public function paginate(int $perPage);
 
     public function create(array $data);

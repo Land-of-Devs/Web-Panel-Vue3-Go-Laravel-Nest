@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\Products;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -23,14 +23,13 @@ class ProductController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * All Products by User
      *
      * @return \Illuminate\Http\Response user products 
      */
     public function index()
     {
         try {
-            # fetch user products only
             $data = $this->productRepository->myProducts();
             return self::apiResponseSuccess($data,'Fetched all products!');
 
@@ -75,13 +74,7 @@ class ProductController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         try {
@@ -90,7 +83,7 @@ class ProductController extends Controller
                 $msg = 'Product Not Found';
                 return self::apiResponseError(null, $msg , $this->not_found);
             }
-            $msg = 'Product Updated Successfully !';
+            $msg = 'Product Updated Successfully !'; 
             return self::apiResponseSuccess($data, $msg);
         } catch (\Exception $e) {
             return self::apiServerError($e->getMessage());

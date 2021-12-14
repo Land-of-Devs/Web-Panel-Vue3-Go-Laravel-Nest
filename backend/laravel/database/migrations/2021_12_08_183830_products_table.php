@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str as Str;
 
 class ProductsTable extends Migration
 {
@@ -13,15 +14,22 @@ class ProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        $migrate = false;
+        while (!$migrate) {
+            if (Schema::hasTable('users')){
+                Schema::create('products', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('slug')->unique();
+                    $table->string('name');
+                    $table->string('description');
+                    $table->uuid('creator');
+                    $table->foreign('creator')->references('id')->on('users');
+                    $table->string('image')->unique();
+                    $table->timestamps();
+                });
+                $migrate = true;
+            }
+        }
     }
 
     /**

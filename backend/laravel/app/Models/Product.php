@@ -10,14 +10,9 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $table = 'products';
 
-    /**
-     * User
-     * 
-     * Get User Uploaded By Product
-     *
-     * @return array Products
-     */
+
     public function user()
     {
         return $this->belongsTo(User::class);

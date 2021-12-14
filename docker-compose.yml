@@ -26,6 +26,7 @@ services:
       # - "443:443"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./data:/app_data
     depends_on:
       - db_admin
       - wp_nest
@@ -64,6 +65,7 @@ services:
       - config/private/${ENV:-dev}/secrets.env
     depends_on:
       - wp_db
+      - wp_go
 
   wp_vue3:
     container_name: "wp_vue3"
