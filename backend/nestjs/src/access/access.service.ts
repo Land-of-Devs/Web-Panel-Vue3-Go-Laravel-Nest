@@ -17,7 +17,7 @@ export class AccessService {
 
   }
 
-  async validateUserPassword(dto: SigninDto): Promise<UserEntity> {
+  async validateEmailPassword(dto: SigninDto): Promise<UserEntity> {
     const user = await this.usersService.getByEmail(dto.email);
     if (user) {
       const valid = await user.validatePassword(dto.password);

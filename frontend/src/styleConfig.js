@@ -1,7 +1,7 @@
 
 export const config = {
   colors: {
-    primary: '#00d1af',
+    primary: '#00bbff',
     navbar: '#ffffff',
     white: '#ffffff',
   },

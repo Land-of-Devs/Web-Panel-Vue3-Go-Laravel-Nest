@@ -20,7 +20,7 @@ export class AccessController {
 
   @Post('signin')
   async signin(@Body() signinDto: SigninDto, @Res() res: Response) {
-    const user = await this.accessService.validateUserPassword(signinDto);
+    const user = await this.accessService.validateEmailPassword(signinDto);
     delete user.password;
     res.cookie('token', this.accessService.generateAccessToken(user.id), this.JWTCookieOptions);
     res.json(user);
