@@ -75,13 +75,13 @@ func Setup() {
 
 	if gin.Mode() == gin.DebugMode {
 		if usr, err := FindOneUser(UserModel{Username: "admin"}); err != nil || usr.ID.IsNil() {
-			fmt.Println("-- CREATING DUMMY DEBUG ADMIN USER!! Login: admin:admin, 2fa secret: 0000 0000 0000 0000 0000")
+			fmt.Println("-- CREATING DUMMY DEBUG ADMIN USER!! Login: admin:admin, 2fa secret: AAAA AAAA AAAA AAAA AAAA")
 			adm := UserModel{
 				Role:          uint8(Admin),
 				Username:      "admin",
 				Email:         os.Getenv("DEBUG_MAIL"),
 				Verify:        true,
-				TwoStepSecret: "00000000000000000000",
+				TwoStepSecret: "AAAAAAAAAAAAAAAAAAAA",
 				Image:         nil,
 			}
 
