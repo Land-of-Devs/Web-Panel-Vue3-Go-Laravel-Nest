@@ -24,7 +24,7 @@ class TwoStepCodeValidateRequest extends FormRequest
             'uuid.required'    => 'UUID is required',
             'uuid.uuid'        => 'UUID is not valid',
             'code.required'    => 'Verification code is required',
-            'code.numeric'     => 'Product price is not a numeric value',
+            'code.numeric'     => 'Verification code is not a numeric value',
         ];
     }
 }

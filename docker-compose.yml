@@ -53,7 +53,7 @@ services:
   wp_laravel:
     tty: true
     container_name: "wp_laravel"
-    image: docker.io/bitnami/laravel:8
+    build: ./config/docker/laravel
     entrypoint: sudo -E sh /pre-app-entrypoint.sh
     volumes:
       - ./backend/laravel:/app

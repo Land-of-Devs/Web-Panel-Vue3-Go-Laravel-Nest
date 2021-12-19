@@ -171,7 +171,6 @@ return [
     */
 
     'persistent_claims' => [
-      'StaffAccessToken',
       'AdminAccessToken',
     ],
 

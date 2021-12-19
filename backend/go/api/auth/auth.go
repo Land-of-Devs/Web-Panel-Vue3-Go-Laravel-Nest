@@ -8,7 +8,7 @@ import (
 
 func InitRoutes(r *gin.RouterGroup) {
 	ctx := r.Group("/auth")
+	ctx.GET("/info", auth.ReadSessionEx(false, auth.User, false), auth.GetSessionInfo)
 	ctx.GET("/test-auth", auth.SetTestToken)
-	//ctx.GET("/info", users.ParseToken)
 	ctx.GET("/admin-session-upgrade", auth.ReadSessionEx(false, auth.Admin, false), auth.UpgradeTokenToAdmin)
 }

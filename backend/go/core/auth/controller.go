@@ -4,32 +4,45 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 	"webpanel/core/users"
 	"webpanel/utils"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid"
 	"github.com/golang-jwt/jwt"
 )
 
+func GetSessionInfo(c *gin.Context) {
+	user := c.MustGet("user").(users.UserModel)
+	session := *c.MustGet("session").(*utils.SessionTokenData)
+
+	c.IndentedJSON(200, gin.H{
+		"user":    user,
+		"session": session,
+	})
+}
+
 func SetTestToken(c *gin.Context) {
-	testUuid, err := uuid.NewV4()
+	usr, err := users.FindOneUser(users.UserModel{Username: "admin"})
 
 	if err != nil {
-		panic(err)
+		c.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
 	}
 
 	tokstr, err := utils.CreateMainToken(utils.SessionTokenData{
-		StandardClaims: jwt.StandardClaims{Subject: testUuid.String()},
+		StandardClaims: jwt.StandardClaims{Subject: usr.ID.String()},
 	})
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("tokstr: %v, uuid: %v\n", tokstr, testUuid)
+	fmt.Printf("tokstr: %v, uuid: %v\n", tokstr, usr.ID)
 
 	SetSession(c, tokstr)
 
@@ -40,7 +53,7 @@ func SetTestToken(c *gin.Context) {
 
 func UpgradeTokenToAdmin(c *gin.Context) {
 	user := c.MustGet("user").(users.UserModel)
-	session := c.MustGet("session").(utils.SessionTokenData)
+	session := *c.MustGet("session").(*utils.SessionTokenData)
 
 	if user.Role != Admin {
 		c.Status(403)
@@ -48,39 +61,40 @@ func UpgradeTokenToAdmin(c *gin.Context) {
 	}
 
 	tsv := NewTwoStepValidator()
-	if err := tsv.Bind(c); err != nil {
+	/* TODO: change to tsv.Bind(c) when endpoint method changes to POST */
+	if err := c.ShouldBindQuery(&tsv); err != nil {
 		c.Status(400)
 		return
 	}
 
+	fmt.Printf("tsv: %v\n", tsv)
 	postBody, _ := json.Marshal(map[string]string{
 		"uuid": user.ID.String(),
 		"code": tsv.Code,
 	})
 
 	responseBody := bytes.NewBuffer(postBody)
-	resp, err := http.Post("http://wp_laravel:3000/api/internal/twostep", "application/json", responseBody)
+	resp, err := http.Post("http://wp_laravel:3000/api/internal/twostep/validate", "application/json", responseBody)
 
 	if err != nil {
 		fmt.Printf("error checking twostep code: %v\n", err)
-		c.Status(500)
+		c.Status(503)
 		return
 	}
 
 	defer resp.Body.Close()
 
-	// body, err := ioutil.ReadAll(resp.Body)
-
-	// if err != nil {
-	// 	fmt.Errorf("error checking twostep code resp: %v", err)
-	// 	c.Status(500)
-	// 	return
-	// }
-
 	ok := resp.StatusCode == 200
 
 	if !ok {
-		c.Status(403)
+		if gin.Mode() == gin.DebugMode {
+			body, _ := ioutil.ReadAll(resp.Body)
+
+			c.Data(resp.StatusCode, "text/html; charset=utf-8", body)
+		} else {
+			c.Status(401)
+		}
+
 		return
 	}
 

@@ -3,8 +3,9 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-abstract class InternalOnlyGuard
+class InternalOnlyGuard
 {
     /**
      * Handle the incoming request.
@@ -15,10 +16,9 @@ abstract class InternalOnlyGuard
      */
     public function handle(Request $request, $next)
     {
-        $host = gethostbyaddr($request::ip());
-        echo $host;
+        $host = gethostbyaddr($request->ip());
 
-        if ($host != 'wp_go') {
+        if ($host != 'wp_go.web-panel_default') {
             throw new HttpException(403, $host);
         }
 
