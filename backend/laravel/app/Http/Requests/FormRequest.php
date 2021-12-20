@@ -43,7 +43,7 @@ abstract class FormRequest extends ApiFormRequest
                 'status' => false,
                 'message' => $err[0] ?? $err,
                 'data' => null
-            ])
+            ], 400)
         );
     }
 }

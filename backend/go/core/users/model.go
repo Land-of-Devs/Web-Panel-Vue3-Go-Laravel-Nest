@@ -68,25 +68,27 @@ func Setup() {
 
 	db.Exec(`
 	CREATE OR REPLACE TRIGGER detect_hash_user_update_biu
-	BEFORE INSERT OR UPDATE ON users
+	BEFORE INSERT OR UPDATE OF username ON users
 	FOR EACH ROW
 	EXECUTE PROCEDURE hash_user_update()
 	`)
 
 	if gin.Mode() == gin.DebugMode {
-		fmt.Println("-- CREATING DUMMY DEBUG ADMIN USER!! Login: admin:admin, 2fa secret: 0000 0000 0000 0000 0000")
-		adm := UserModel{
-			Role:          uint8(Admin),
-			Username:      "admin",
-			Email:         os.Getenv("DEBUG_MAIL"),
-			Verify:        true,
-			TwoStepSecret: "00000000000000000000",
-			Image:         nil,
-		}
+		if usr, err := FindOneUser(UserModel{Username: "admin"}); err != nil || usr.ID.IsNil() {
+			fmt.Println("-- CREATING DUMMY DEBUG ADMIN USER!! Login: admin:admin, 2fa secret: AAAA AAAA AAAA AAAA AAAA")
+			adm := UserModel{
+				Role:          uint8(Admin),
+				Username:      "admin",
+				Email:         os.Getenv("DEBUG_MAIL"),
+				Verify:        true,
+				TwoStepSecret: "AAAAAAAAAAAAAAAAAAAA",
+				Image:         nil,
+			}
 
-		adm.setPassword("admin")
-		if err := SaveOne(&adm); err != nil {
-			fmt.Printf("error creating dummy admin: %v", err)
+			adm.setPassword("admin")
+			if err := SaveOne(&adm); err != nil {
+				fmt.Printf("error creating dummy admin: %v", err)
+			}
 		}
 	}
 }
@@ -109,7 +111,7 @@ func (u *UserModel) setPassword(password string) error {
 	return nil
 }
 
-func FindOneUser(condition interface{}) (UserModel, error) {
+func FindOneUser(condition UserModel) (UserModel, error) {
 	db := db.GetConnection()
 	var model UserModel
 	err := db.Where(condition).First(&model).Error

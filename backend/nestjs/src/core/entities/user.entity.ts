@@ -1,7 +1,13 @@
-import { DefaultValuePipe } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { BaseEntity, BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import * as bcrypt from 'bcrypt';
+
+export enum UserRole {
+  GUEST,
+  USER,
+  EMPLOYEE,
+  ADMIN
+}
 
 @Entity({name: 'users'})
 export class UserEntity extends BaseEntity {
@@ -13,7 +19,7 @@ export class UserEntity extends BaseEntity {
     this.email = email;
     this.username = username;
     this.password = password;
-    this.role = 0;
+    this.role = UserRole.USER;
     this.verify = false;
   }
 

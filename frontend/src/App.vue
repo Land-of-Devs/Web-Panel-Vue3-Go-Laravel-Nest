@@ -29,5 +29,15 @@ body, html {
 body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
+#app {
+  height: 100vh;
+}
+
+.form-err {
+  color: red;
+  font-size: 11pt;
+  text-align: center;
+  margin-bottom: 5px;
+}
 
 </style>
