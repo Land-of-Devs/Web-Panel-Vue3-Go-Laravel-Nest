@@ -79,7 +79,6 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 
 		now := time.Now().Unix()
 		hasAdminUpgrade := now < data.AdminAccessToken
-		hasStaffUpgrade := now < data.StaffAccessToken
 
 		usrUuid, err := uuid.FromString(data.Subject)
 
@@ -102,10 +101,7 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 
 		fmt.Printf("user: %v, data: %v\n", user, data)
 
-		if user.Role < roleRequired ||
-			(mustBeUpgraded &&
-				((roleRequired == Admin && !hasAdminUpgrade) ||
-					(roleRequired == Staff && !hasStaffUpgrade))) {
+		if user.Role < roleRequired || (mustBeUpgraded && !hasAdminUpgrade) {
 			handleTokenError(optional, token, c, &utils.ErrForbidden{}, false)
 			return
 		}

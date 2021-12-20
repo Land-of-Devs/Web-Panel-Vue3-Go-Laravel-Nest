@@ -124,13 +124,21 @@ func DeleteUsers(uuids []uuid.UUID) {
 	db.Delete(&model, uuids)
 }
 
-func FindAllUsers(c *gin.Context) ([]UserModel, error) {
+func FindAllUsersPag(c *gin.Context) ([]UserModel, error) {
 	db := db.GetConnection()
 	var arrModel []UserModel
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
 	err := db.Scopes(utils.Paginate(page, pageSize)).Find(&arrModel).Error
+	return arrModel, err
+}
+
+func FindAllUsers() ([]UserModel, error) {
+	db := db.GetConnection()
+	var arrModel []UserModel
+
+	err := db.Find(&arrModel).Error
 	return arrModel, err
 }
 

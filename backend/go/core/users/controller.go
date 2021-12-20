@@ -54,7 +54,7 @@ func UserUpdate(c *gin.Context) {
 }
 
 func UserList(c *gin.Context) {
-	myUserModels, err := FindAllUsers(c)
+	myUserModels, err := FindAllUsersPag(c)
 	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
