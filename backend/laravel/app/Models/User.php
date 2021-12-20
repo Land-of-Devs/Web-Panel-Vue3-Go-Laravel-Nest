@@ -11,7 +11,7 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
     protected $table = 'users';
-
+    protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
      *

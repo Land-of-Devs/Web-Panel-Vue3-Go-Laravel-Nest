@@ -8,32 +8,27 @@ use Illuminate\Support\Facades\File;
 
 class FileUploader
 {
-	public static function store( $field, $file, $slug, $type, $loc)
-  	{
-        //dd($file);
-        $request = new Request();
-        if ($file){
-            $name  = $slug . '.' . $file->getClientOriginalExtension();
-        
-            $file->move($loc, $name);
-            return '/api/data/img/'.$type.'/'.$name;
+    public static function store($file, $name, $dir)
+    {
+        if ($file) {
+            $name  = $name . '.' . $file->getClientOriginalExtension();
+            $path = '/app_data/'.$dir.'/';
+            $file->move($path, $name);
+            return $name;
         }
+    }
 
-  	}
+    public static function update($newFile, $name, $dir, $oldFile)
+    {
+        self::delete($oldFile, $dir);
+        return self::store($newFile, $name, $dir);
+    }
 
-  	public static function update($field, $file, $slug, $type, $loc, $old)
-  	{
-        # remove old file
-  		  self::delete($old);
-        # store new file
-        return self::store($field, $file, $slug, $type, $loc);
-	    	
-  	}
-
-  	public static function delete($file)
-  	{
-  		if (File::exists($file)) {
-      		File::delete($file);
-    	}
-  	}
+    public static function delete($name, $dir)
+    {
+        $path = '/app_data/'.$dir.'/'.$name;
+        if (File::exists($path)) {
+            File::delete($path);
+        }
+    }
 }

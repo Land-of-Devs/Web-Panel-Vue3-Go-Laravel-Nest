@@ -9,12 +9,13 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
     protected $table = 'products';
+    protected $fillable =  ['name','description', 'slug', 'creator', 'price'];
+    protected $hidden = ['creator'];
 
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'creator');
     }
 }

@@ -11,6 +11,7 @@ type UserResponse struct {
 	Image    *string   `json:"image"`
 	Verify   bool      `json:"verify"`
 	Role     int8      `json:"role"`
+	Hash     int       `json:"hash"`
 }
 
 type UsersResponse struct {
@@ -25,6 +26,7 @@ func Serialize(myUserModel UserModel) UserResponse {
 		Image:    myUserModel.Image,
 		Verify:   myUserModel.Verify,
 		Role:     int8(myUserModel.Role),
+		Hash:     myUserModel.Hash,
 	}
 
 	return user

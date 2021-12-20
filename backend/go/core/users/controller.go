@@ -21,8 +21,14 @@ func UsersCreation(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, utils.NewError("database", err))
 		return
 	}
+	
+	user, err := FindOneUser(UserModel{ID: userModelValidator.userModel.ID}) 
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, utils.NewError("usernotset", err))
+		return
+	}
 
-	c.JSON(http.StatusCreated, gin.H{"user": Serialize(userModelValidator.userModel)})
+	c.JSON(http.StatusCreated, gin.H{"user": Serialize(user)})
 }
 
 func UserUpdate(c *gin.Context) {

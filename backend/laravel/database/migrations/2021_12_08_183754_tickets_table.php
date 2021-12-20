@@ -18,7 +18,7 @@ class TicketsTable extends Migration
             $table->string('title');
             $table->enum('type', config('enums.ticket_types'));
             $table->timestamp('sent_at')->nullable();
-            $table->uuid('user');
+            $table->uuid('user')->references('id')->on('users')->onDelete('cascade');
             $table->json('content');
             $table->enum('status', config('enums.ticket_status'));
         });

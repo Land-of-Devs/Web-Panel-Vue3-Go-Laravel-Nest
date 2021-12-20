@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str as Str;
 
 class ProductsTable extends Migration
 {
@@ -22,9 +21,10 @@ class ProductsTable extends Migration
                     $table->string('slug')->unique();
                     $table->string('name');
                     $table->string('description');
-                    $table->uuid('creator');
-                    $table->foreign('creator')->references('id')->on('users');
-                    $table->string('image')->unique();
+                    $table->integer('price');
+                    $table->uuid('creator')->nullable();
+                    $table->foreign('creator')->references('id')->on('users')->onDelete('set null');
+                    $table->string('image')->nullable();
                     $table->timestamps();
                 });
                 $migrate = true;
