@@ -5,7 +5,7 @@ return [
         'CREATE_P' => "Create Product",
         'UPDATE_U' => "Update User",
     ],
-    'ticket_status' => [
+    'item_status' => [
         'PENDING' => "Pending",
         'ACCEPT' => "Accept",
         'CANCELLED' => "Cancelled",

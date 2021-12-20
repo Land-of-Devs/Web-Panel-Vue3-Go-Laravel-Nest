@@ -96,6 +96,21 @@ func Setup() {
 func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
 	id, err := uuid.NewV4()
 	u.ID = id
+
+	if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
+		u.TwoStepSecret = utils.GenerateTwoStepSecret()
+	}
+
+	return
+}
+
+func (u *UserModel) BeforeUpdate(tx *gorm.DB) (err error) {
+	if u.Role < uint8(Admin) && u.TwoStepSecret != "" {
+		u.TwoStepSecret = ""
+	} else if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
+		u.TwoStepSecret = utils.GenerateTwoStepSecret()
+	}
+
 	return
 }
 

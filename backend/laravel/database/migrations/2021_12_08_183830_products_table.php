@@ -25,6 +25,7 @@ class ProductsTable extends Migration
                     $table->uuid('creator')->nullable();
                     $table->foreign('creator')->references('id')->on('users')->onDelete('set null');
                     $table->string('image')->nullable();
+                    $table->enum('status', config('enums.item_status'));
                     $table->timestamps();
                 });
                 $migrate = true;

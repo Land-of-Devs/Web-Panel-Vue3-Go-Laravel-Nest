@@ -25,5 +25,5 @@ func main() {
 }
 
 func migrate() {
-	users.Setup();
+	users.Setup()
 }
