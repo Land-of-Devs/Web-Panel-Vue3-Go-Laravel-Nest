@@ -1,39 +1,33 @@
 <?php
 
-namespace App\Http\Controllers\api\internal;
+namespace App\Http\Controllers\Api\Internal;
 
+use App\Adapters\ViewModels\JsonResourceViewModel;
+use App\Domain\UseCases\TwoStepValidate\TwoStepValidateInputPort;
+use App\Domain\UseCases\TwoStepValidate\TwoStepValidateRequestModel;
 use App\Http\Requests\TwoStepCodeValidateRequest;
-use RobThree\Auth\TwoFactorAuth;
+use App\Http\Controllers\Controller;
 
-use Illuminate\Http\Request;
-
+/**
+ * Verify the 2fa code for the given user.
+ */
 class TwoStepCodeValidateController extends Controller
 {
-    use ApiResponseTrait;
-
-    private $tfa;
-
-    public function __construct() {
-        $this->tfa = new TwoFactorAuth();
+    public function __construct(
+        private TwoStepValidateInputPort $interactor,
+    ) {
     }
 
-    /**
-     * Verify the 2fa code for the given user.
-     *
-     * @param  TwoStepCodeValidateRequest  $req
-     * @return \Illuminate\Http\Response
-     */
-    public function verify(TwoStepCodeValidateRequest $data)
+    public function __invoke(TwoStepCodeValidateRequest $data)
     {
-        try {
-            $data = $this->productRepository->find($id);
-            if(is_null($data)){
-                $msg = 'Product Not Found';
-                return self::apiResponseError(null, $msg , $this->not_found);
-            }
-            return self::apiResponseSuccess($data, 'See product details!');
-        } catch (\Exception $e) {
-            return self::apiServerError($e->getMessage());
+        $viewModel = $this->interactor->verifyCode(
+            new TwoStepValidateRequestModel($data->validated())
+        );
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+
+        return null;
     }
 }
