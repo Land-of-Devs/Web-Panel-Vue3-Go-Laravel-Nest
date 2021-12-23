@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Domain\Interfaces\UserEntity;
+use App\Domain\Interfaces\Users\UserEntity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject, UserEntity
      * @var array
      */
     protected $fillable = [
-        'id', 'username', 'email', 'image', 'verify',
+        'id', 'username', 'email'
     ];
 
     protected $casts = [];
@@ -42,20 +42,21 @@ class User extends Authenticatable implements JWTSubject, UserEntity
     public function getJWTCustomClaims()
     {
         return [
-          'AdminAccessToken' => 0,
+            'AdminAccessToken' => 0,
         ];
     }
 
-    public function getUuid() : ?string
+    public function getUuid(): ?string
     {
         return $this->getKey();
     }
 
-    public function getRole() : int {
+    public function getRole(): int
+    {
         return $this->attributes['role'] ?? 0;
     }
 
-    public function getName() : ?string
+    public function getName(): ?string
     {
         return $this->attributes['username'] ?? null;
     }
@@ -64,8 +65,8 @@ class User extends Authenticatable implements JWTSubject, UserEntity
     {
         $this->attributes['username'] = $name;
     }
-    
-    public function getEmail() : ?string
+
+    public function getEmail(): ?string
     {
         return $this->attributes['email'] ?? null;
     }
@@ -74,8 +75,8 @@ class User extends Authenticatable implements JWTSubject, UserEntity
     {
         $this->attributes['email'] = $email;
     }
-    
-    public function getTwoStepSecret() : ?string
+
+    public function getTwoStepSecret(): ?string
     {
         return $this->attributes['two_step_secret'] ?? null;
     }

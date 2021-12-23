@@ -2,113 +2,102 @@
 
 namespace App\Http\Controllers\Api\Products;
 
-use App\Http\Controllers\Controller;
+use App\Adapters\ViewModels\JsonResourceViewModel;
+use App\Domain\UseCases\Products\ProductInputPort;
+use App\Domain\UseCases\Products\ProductRequestModel;
 use App\Http\Requests\Products\ProductCreateRequest;
 use App\Http\Requests\Products\ProductUpdateRequest;
-use Illuminate\Http\Request;
-use App\Repositories\ProductRepository;
-use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Response;
+use App\Http\Requests\Products\ProductSlugsRequest;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
-    use ApiResponseTrait;
 
-    public $productRepository;
-
-    public $not_found;
-
-    public function __construct(ProductRepository $productRepository)
-    {
-        $this->productRepository = $productRepository;
-        $this->not_found = Response::HTTP_NOT_FOUND;
-    }
+    public function __construct(
+        private ProductInputPort $interactor,
+    ) {}
 
     public function index()
     {
-        try {
-            $data = $this->productRepository->myProducts();
-            return self::apiResponseSuccess($data,'Fetched all products!');
-            
-        } catch (\Exception $e) {
-            return self::apiServerError($e->getMessage());
+        $viewModel = $this->interactor->myProducts();
+        
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+
+        return null;
     }
 
     public function all()
     {
-        $data = $this->productRepository->all();
-        return self::apiResponseSuccess($data, 'Found '.count($data).' Products');
+        $viewModel = $this->interactor->all();
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
+        }
+
+        return null;
     }
+
+    // public function show($id)
+    // {
+    //     try {
+    //         $data = $this->productRepository->find($id);
+    //         if (is_null($data)) {
+    //             $msg = 'Product Not Found';
+    //             return self::apiResponseError(null, $msg, $this->not_found);
+    //         }
+    //         return self::apiResponseSuccess($data, 'See product details!');
+    //     } catch (\Exception $e) {
+    //         return self::apiServerError($e->getMessage());
+    //     }
+    // }
 
     public function store(ProductCreateRequest $request)
     {
-        try {
-            $requestVal = $request->validated();
-            $data = $this->productRepository->create($requestVal);
-            return self::apiResponseSuccess($data, 'New Product Added!');
-        } catch (\Exception $e) {
-            return self::apiServerError($e->getMessage());
+        $viewModel = $this->interactor->create(
+            new ProductRequestModel($request->validated())
+        );
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+
+        return null;
     }
 
-    public function show($id)
+
+    public function update(string $slug, ProductUpdateRequest $request)
     {
-        try {
-            $data = $this->productRepository->find($id);
-            if(is_null($data)){
-                $msg = 'Product Not Found';
-                return self::apiResponseError(null, $msg , $this->not_found);
-            }
-            return self::apiResponseSuccess($data, 'See product details!');
-        } catch (\Exception $e) {
-            return self::apiServerError($e->getMessage());
+        $viewModel = $this->interactor->update($slug,
+            new ProductRequestModel($request->validated())
+        );
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+
+        return null;
     }
 
-    public function update($id, ProductUpdateRequest $request)
+    public function delete(ProductSlugsRequest $request)
     {
-        echo json_encode($request->all());
-        try {
-            $requestVal = $request->validated();
-            $data = $this->productRepository->update($id, $requestVal);
-            if(is_null($data)){
-                $msg = 'Product Not Updated';
-                return self::apiResponseError(null, $msg , $this->not_found);
-            }
-            $msg = 'Product Updated Successfully !'; 
-            return self::apiResponseSuccess($data, $msg);
-        } catch (\Exception $e) {
-            return self::apiServerError($e->getMessage());
+        $viewModel = $this->interactor->delete($request->validated()['slugs']);
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+        return null;
     }
 
-    public function delete(Request $request)
+    public function status(ProductSlugsRequest $request)
     {
-        try {
-            $data = $this->productRepository->delete($request->slugs);
-            if($data){
-                $msg = 'Product Deleted Successfully !';
-                return self::apiResponseSuccess($data, $msg);
-            }
-            $msg = 'Product Not Found';
-            return self::apiResponseError(null, $msg , $this->not_found);
+        $requestV = $request->validated();
+        $viewModel = $this->interactor->status($requestV['slugs'], $requestV['status']);
 
-        } catch (\Exception $e) {
-
-            return self::apiServerError($e->getMessage());
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+        return null;
     }
-
-    // public function search(Request $request)
-    // {
-    //     $data = $this->productRepository->search($request->keyword,$request->page, null);
-    //     return self::apiResponseSuccess($data, 'Found '.count($data).' Products');
-    // }
-
-    // public function searchMyStore(Request $request)
-    // {
-    //     $data = $this->productRepository->search($request->keyword,$request->page, auth()->guard()->user()->id);
-    //     return self::apiResponseSuccess($data, 'Found '.count($data).' Products');
-    // }
 }

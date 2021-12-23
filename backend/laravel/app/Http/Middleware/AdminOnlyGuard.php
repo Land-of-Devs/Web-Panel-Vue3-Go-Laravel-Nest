@@ -7,7 +7,7 @@ use App\Traits\JWTUtilsTrait;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class StaffOnlyGuard
+class AdminOnlyGuard
 {
   use JWTUtilsTrait;
 
@@ -22,7 +22,7 @@ class StaffOnlyGuard
   {
     $usr = $this->guard()->user();
 
-    if ($usr instanceof UserEntity && $usr->getRole() < config('enums.staff_roles.EMPLOYEE')) { /* TODO: proper enum for roles */
+    if ($usr instanceof UserEntity && $usr->getRole() < config('enums.staff_roles.ADMIN')) {
       throw new AccessDeniedHttpException();
     }
 

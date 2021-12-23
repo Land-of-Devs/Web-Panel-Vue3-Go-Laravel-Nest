@@ -2,8 +2,8 @@
 
 namespace App\Factories;
 
-use App\Domain\Interfaces\UserEntity;
-use App\Domain\Interfaces\UserFactory;
+use App\Domain\Interfaces\Users\UserEntity;
+use App\Domain\Interfaces\Users\UserFactory;
 use App\Models\User;
 
 class UserModelFactory implements UserFactory

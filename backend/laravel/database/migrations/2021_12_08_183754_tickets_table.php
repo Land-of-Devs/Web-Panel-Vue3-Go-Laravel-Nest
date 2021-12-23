@@ -20,7 +20,7 @@ class TicketsTable extends Migration
             $table->timestamp('sent_at')->nullable();
             $table->uuid('user')->references('id')->on('users')->onDelete('cascade');
             $table->json('content');
-            $table->enum('status', config('enums.item_status'));
+            $table->enum('status', config('enums.item_status'))->default(config('enums.item_status.PENDING'));
         });
     }
 

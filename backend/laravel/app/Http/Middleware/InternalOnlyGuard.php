@@ -18,7 +18,8 @@ class InternalOnlyGuard
     {
         $host = gethostbyaddr($request->ip());
 
-        if ($host != 'wp_go.web-panel_default') {
+        $host = explode('.',$host)[0];
+        if ($host != 'wp_go') {
             throw new HttpException(403, $host);
         }
 

@@ -41,12 +41,11 @@ class ProductUpdateRequest extends FormRequest
     {
         return [
             'required'        => ':attribute is missing!',
-            'description.max' => 'Description is too long',
-            'name.max'        => 'Name is too long',
+            'max'             => ':attribute is too long',
             'numeric'         => ':attribute is not a numeric value',
             'image'           => ':attribute should be an Image',
-            'image.max'       => 'Image is too big. Maximum allow 2MB',
-            'mimes'           => 'Image need to be [png,jpg,jpeg]'
+            'image.max'       => ':attribute is too big. Maximum allow 2MB',
+            'mimes'           => ':attribute need to be [png,jpg,jpeg]'
         ];
     }
 }

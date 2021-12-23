@@ -3,9 +3,10 @@
 namespace App\Http\Requests\Products;
 
 use App\Http\Requests\FormRequest;
+use Illuminate\Validation\Rule;
 
 
-class ProductCreateRequest extends FormRequest
+class ProductSlugsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,10 +16,9 @@ class ProductCreateRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'          => 'required|string|max:255',
-            'description'   => 'required|string|max:3000',
-            'price'         => 'required|numeric',
-            'image'         => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'slugs'         => 'required|array',
+            'slugs.*'       => 'required|string',
+            'status'        => ['sometimes', Rule::in(array_values(config('enums.item_status')))]
         ];
         return $rules;
     }
@@ -41,11 +41,9 @@ class ProductCreateRequest extends FormRequest
     {
         return [
             'required'      => ':attribute is missing!',
-            'max'           => ':attribute is too long',
-            'numeric'       => ':attribute is not a numeric value',
-            'image'         => ':attribute should be an Image',
-            'image.max'     => ':attribute is too big. Maximum allow :max',
-            'string'        => ':attribute is not a string value'
+            'array'         => ':attribute needs to be an array',
+            'string'        => ':attribute needs to be a string!',
+            'in'            => ':attribute needs to be one of these: (:values)!'
         ];
     }
 }

@@ -104,13 +104,17 @@ func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (u *UserModel) BeforeUpdate(tx *gorm.DB) (err error) {
+func (u *UserModel) BeforeSave(tx *gorm.DB) (err error) {
+	fmt.Printf("u.Role: %v\n", u.Role)
 	if u.Role < uint8(Admin) && u.TwoStepSecret != "" {
 		u.TwoStepSecret = ""
-	} else if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
+	}
+
+	if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
 		u.TwoStepSecret = utils.GenerateTwoStepSecret()
 	}
 
+	fmt.Printf("u.TwoStepSecret: %v\n", u.TwoStepSecret)
 	return
 }
 

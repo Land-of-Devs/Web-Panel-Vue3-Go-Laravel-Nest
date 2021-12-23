@@ -9,30 +9,30 @@ use RobThree\Auth\TwoFactorAuth;
 
 class TwoStepValidateInteractor implements TwoStepValidateInputPort
 {
-  public function __construct(
-    private TwoStepValidateOutputPort $output,
-    private UserRepository $db,
-    private UserFactory $factory,
-    private TwoFactorAuth $tfa,
-  ) {
-  }
-
-  public function verifyCode(TwoStepValidateRequestModel $data): ViewModel
-  {
-    $user = $this->db->get($this->factory->make([
-      'id' => $data->getUuid()
-    ]));
-
-    if (!$user) {
-      return $this->output->codeInvalid();
+    public function __construct(
+        private TwoStepValidateOutputPort $output,
+        private UserRepository $db,
+        private UserFactory $factory,
+        private TwoFactorAuth $tfa,
+    ) {
     }
 
-    $ok = $this->tfa->verifyCode($user->getTwoStepSecret(), $data->getCode());
+    public function verifyCode(TwoStepValidateRequestModel $data): ViewModel
+    {
+        $user = $this->db->get($this->factory->make([
+            'id' => $data->getUuid()
+        ]));
 
-    if ($ok) {
-      return $this->output->codeValid();
-    } else {
-      return $this->output->codeInvalid();
+        if (!$user) {
+            return $this->output->codeInvalid();
+        }
+
+        $ok = $this->tfa->verifyCode($user->getTwoStepSecret(), $data->getCode());
+
+        if ($ok) {
+            return $this->output->codeValid();
+        } else {
+            return $this->output->codeInvalid();
+        }
     }
-  }
 }
