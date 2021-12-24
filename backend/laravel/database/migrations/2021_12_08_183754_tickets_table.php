@@ -13,15 +13,22 @@ class TicketsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tickets', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->enum('type', config('enums.ticket_types'));
-            $table->timestamp('sent_at')->nullable();
-            $table->uuid('user')->references('id')->on('users')->onDelete('cascade');
-            $table->json('content');
-            $table->enum('status', config('enums.item_status'))->default(config('enums.item_status.PENDING'));
-        });
+        $migrate = false;
+        while (!$migrate) {
+            if (Schema::hasTable('users')) {
+                Schema::create('tickets', function (Blueprint $table) {
+                    $table->id();
+                    $table->string('title');
+                    $table->enum('type', config('enums.ticket_types'));
+                    $table->uuid('creator');
+                    $table->foreign('creator')->references('id')->on('users')->onDelete('cascade');
+                    $table->json('content');
+                    $table->enum('status', config('enums.item_status'))->default(config('enums.item_status.PENDING'));
+                    $table->timestamps();
+                });
+                $migrate = true;
+            }
+        }
     }
 
     /**

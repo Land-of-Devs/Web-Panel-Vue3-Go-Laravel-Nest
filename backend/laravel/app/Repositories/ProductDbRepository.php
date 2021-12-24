@@ -16,7 +16,7 @@ class ProductDbRepository implements ProductRepository
 {
     use RepositoryUtilsTrait;
 
-    public function find($slug): ?ProductEntity
+    public function find(string $slug): ?ProductEntity
     {
         return Product::with('user')->where('slug', '=', $slug)->first();
     }
@@ -81,11 +81,11 @@ class ProductDbRepository implements ProductRepository
                         $toUpdate->getImage()
                     ));
             }
-            $toUpdate->fill(self::cleanArray([
+            $toUpdate->fillProduct(self::cleanArray([
                 'description' => $product->description,
                 'price' => $product->price
             ]));
-            $toUpdate->save();
+            $toUpdate->saveProduct();
             return $this->find($toUpdate->getSlug());
         } else {
             throw new AccessDeniedHttpException();
@@ -97,15 +97,15 @@ class ProductDbRepository implements ProductRepository
         try {
             $result = new stdClass();
             $result->count = 0;
-            $result->slugs = [];
+            $result->keys = [];
             $result->result = false;
             foreach ($slugs as $slug) {
                 $product = $this->find($slug);
                 if ($product) {
                     FileUploader::delete($product->image, 'img/products');
-                    $product->delete();
+                    $product->deleteProduct();
                     $result->count++;
-                    array_push($result->slugs, $slug);
+                    array_push($result->keys, $slug);
                 }
             }
             $result->result = true;
@@ -120,7 +120,7 @@ class ProductDbRepository implements ProductRepository
         try {
             $result = new stdClass();
             $result->count = 0;
-            $result->slugs = [];
+            $result->keys = [];
             $result->result = false;
             foreach ($slugs as $slug) {
                 $product = $this->find($slug);
@@ -128,7 +128,7 @@ class ProductDbRepository implements ProductRepository
                     $product->setStatus($status);
                     $product->saveProduct();
                     $result->count++;
-                    array_push($result->slugs, $slug);
+                    array_push($result->keys, $slug);
                 }
             }
             $result->result = true;

@@ -12,7 +12,7 @@ class SuccessResource extends JsonResource
         $this->resource = [
             'success' => $msg,
             'count' => $result->count,
-            'efected' => $result->slugs
+            'efected' => $result->keys
         ];
     }
 

@@ -31,6 +31,17 @@ use App\Factories\ProductModelFactory;
 use App\Http\Controllers\Api\Products\ProductController;
 use App\Repositories\ProductDbRepository;
 
+
+//TICKET
+use App\Domain\Interfaces\Tickets\TicketFactory;
+use App\Domain\Interfaces\Tickets\TicketRepository;
+use App\Adapters\Presenters\TicketPresenter;
+use App\Domain\UseCases\Tickets\TicketInputPort;
+use App\Domain\UseCases\Tickets\TicketInteractor;
+use App\Factories\TicketModelFactory;
+use App\Http\Controllers\Api\Tickets\TicketController;
+use App\Repositories\TicketDbRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register()
@@ -55,6 +66,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ProductRepository::class,
             ProductDbRepository::class
+        );
+
+        //TICKET
+        $this->app->bind(
+            TicketFactory::class,
+            TicketModelFactory::class
+        );
+        $this->app->bind(
+            TicketRepository::class,
+            TicketDbRepository::class
         );
 
         //------[ CONTROLLER INSTANCING ]------\\
@@ -86,6 +107,16 @@ class AppServiceProvider extends ServiceProvider
             ->give(function ($app){
                 return $app->make(ProductInteractor::class, [
                     'output' => $app->make(ProductPresenter::class)
+                ]);
+            });
+
+        //TICKET
+        $this->app
+            ->when(TicketController::class)
+            ->needs(TicketInputPort::class)
+            ->give(function ($app) {
+                return $app->make(TicketInteractor::class, [
+                    'output' => $app->make(TicketPresenter::class)
                 ]);
             });
     }

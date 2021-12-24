@@ -18,12 +18,13 @@ class ProductInteractor implements ProductInputPort
     ) {
     }
 
-    public function myProducts(): ViewModel{
+    public function myProducts(): ViewModel
+    {
         $success = $this->repository->myProducts();
         if ($success) {
             return $this->output->listProducts($success);
         } else {
-            return $this->output->fail('List of Products Not Found!!!', 404);
+            return $this->output->fail('List of your Products not Found!!!', 404);
         }
     }
 
@@ -34,6 +35,16 @@ class ProductInteractor implements ProductInputPort
             return $this->output->listProducts($success);
         } else {
             return $this->output->fail('List of Products Not Found!!!', 404);
+        }
+    }
+
+    public function show(string $slug): ViewModel
+    {
+        $success = $this->repository->find($slug);
+        if ($success) {
+            return $this->output->product($success);
+        } else {
+            return $this->output->fail('Product Not Found!!!', 404);
         }
     }
 
@@ -72,9 +83,9 @@ class ProductInteractor implements ProductInputPort
         $success = $this->repository->delete($slugs);
 
         if ($success->result) {
-            if($success->count > 0 ){
+            if ($success->count > 0) {
                 return $this->output->success('Products were successfully deleted!!!', 300, $success);
-            }else{
+            } else {
                 return $this->output->success("Wasn't deleted any product!!", 300, $success);
             }
         } else {
@@ -96,5 +107,4 @@ class ProductInteractor implements ProductInputPort
             return $this->output->fail('Prodcut status change Failed!!!', 400);
         }
     }
-
 }

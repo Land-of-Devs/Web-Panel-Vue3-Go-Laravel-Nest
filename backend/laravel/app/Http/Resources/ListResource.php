@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Resources\Products;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ListResource extends JsonResource
 {
-    public function __construct(object $products)
+    public function __construct(object $list)
     {
         $this->resource = [
-            'list' => $products
+            'list' => $list
         ];
     }
 }

@@ -26,8 +26,8 @@ Route::group(['prefix' => 'staff', 'middleware' => ['auth:api','staff.only:api']
     Route::group(['prefix' => 'tickets'], function () {
         Route::delete('delete', [TicketController::class, 'delete']);
         Route::put('status', [TicketController::class, 'status']);
-        Route::get('all', [TicketController::class, 'all']);
     });
+    Route::resource('tickets', TicketController::class, ['only' => ['index', 'show']]);
 
     // Route::group([
     //     'prefix' => 'auth',

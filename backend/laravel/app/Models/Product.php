@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Domain\Interfaces\Products\ProductEntity;
-use Exception;
 
 class Product extends Model implements ProductEntity
 {
@@ -25,7 +24,21 @@ class Product extends Model implements ProductEntity
     public function saveProduct(): void
     {
         if (!$this->save()) {
-            throw new Exception("Couldn't save Product");
+            throw new \Exception("Couldn't save Product");
+        }
+    }
+
+    public function deleteProduct(): void
+    {
+        if (!$this->delete()) {
+            throw new \Exception("Couldn't delete Product");
+        }
+    }
+
+    public function fillProduct(array $attr): void
+    {
+        if (!$this->fill($attr)) {
+            throw new \Exception("Couldn't update Product");
         }
     }
 

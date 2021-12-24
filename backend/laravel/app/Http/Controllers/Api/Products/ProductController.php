@@ -39,19 +39,16 @@ class ProductController extends Controller
         return null;
     }
 
-    // public function show($id)
-    // {
-    //     try {
-    //         $data = $this->productRepository->find($id);
-    //         if (is_null($data)) {
-    //             $msg = 'Product Not Found';
-    //             return self::apiResponseError(null, $msg, $this->not_found);
-    //         }
-    //         return self::apiResponseSuccess($data, 'See product details!');
-    //     } catch (\Exception $e) {
-    //         return self::apiServerError($e->getMessage());
-    //     }
-    // }
+    public function show(string $slug)
+    {
+        $viewModel = $this->interactor->show($slug);
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
+        }
+
+        return null;
+    }
 
     public function store(ProductCreateRequest $request)
     {

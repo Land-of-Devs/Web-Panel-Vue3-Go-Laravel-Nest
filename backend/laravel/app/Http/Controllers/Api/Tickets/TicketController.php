@@ -2,62 +2,56 @@
 
 namespace App\Http\Controllers\Api\Tickets;
 
+use App\Adapters\ViewModels\JsonResourceViewModel;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Repositories\TicketRepository;
-use App\Traits\ApiResponseTrait;
-use Illuminate\Http\Response;
-use App\Http\Requests\Tickets\TicketStatusRequest;
+use App\Domain\UseCases\Tickets\TicketInputPort;
+use App\Http\Requests\Tickets\TicketIdsRequest;
 
 class TicketController extends Controller
 {
-    use ApiResponseTrait;
+    public function __construct(
+        private TicketInputPort $interactor,
+    ) {}
 
-    public $ticketsRepository;
-
-    public $not_found;
-
-    public function __construct(TicketRepository $ticketsRepository)
+    public function index()
     {
-        $this->ticketsRepository = $ticketsRepository;
-        $this->not_found = Response::HTTP_NOT_FOUND;
-    }
+        $viewModel = $this->interactor->all();
 
-    public function all()
-    {
-        $data = $this->ticketsRepository->all();
-        return self::apiResponseSuccess($data, 'Found ' . count($data) . ' Tickets');
-    }
-
-    public function status(TicketStatusRequest $request)
-    {
-        $request->validate();
-        // try {
-        //     $data = $this->ticketsRepository->setStatus($request->tickets);
-        //     if ($data) {
-        //         $msg = 'Tickets Deleted Successfully !';
-        //         return self::apiResponseSuccess($data, $msg);
-        //     }
-        //     $msg = 'Tickets Not Found';
-        //     return self::apiResponseError(null, $msg, $this->not_found);
-        // } catch (\Exception $e) {
-        //     return self::apiServerError($e->getMessage());
-        // }
-    }
-
-    public function delete(Request $request)
-    {
-        try {
-            $data = $this->ticketsRepository->delete($request->tickets);
-            if ($data) {
-                $msg = 'Tickets Deleted Successfully !';
-                return self::apiResponseSuccess($data, $msg);
-            }
-            $msg = 'Tickets Not Found';
-            return self::apiResponseError(null, $msg, $this->not_found);
-        } catch (\Exception $e) {
-
-            return self::apiServerError($e->getMessage());
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
         }
+
+        return null;
+    }
+
+    public function show(string $id){
+        $viewModel = $this->interactor->show($id);
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
+        }
+
+        return null;
+    }
+
+    public function status(TicketIdsRequest $request)
+    {
+        $requestV = $request->validated();
+        $viewModel = $this->interactor->status($requestV['ids'], $requestV['status']);
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
+        }
+        return null;
+    }
+
+    public function delete(TicketIdsRequest $request)
+    {
+        $viewModel = $this->interactor->delete($request->validated()['ids']);
+
+        if ($viewModel instanceof JsonResourceViewModel) {
+            return $viewModel->getResource();
+        }
+        return null;
     }
 }

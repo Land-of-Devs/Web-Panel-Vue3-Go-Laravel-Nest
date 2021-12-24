@@ -5,7 +5,7 @@ namespace App\Http\Requests\Tickets;
 use App\Http\Requests\FormRequest;
 use Illuminate\Validation\Rule;
 
-class TicketStatusRequest extends FormRequest
+class TicketIdsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,9 +15,9 @@ class TicketStatusRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'tickets'           => 'required|array',
-            'tickets.*.id'      => 'required|numeric',
-            'tickets.*.status'  => ['required',Rule::in(array_values(config('enums.item_status')))],
+            'ids'   => 'required|array',
+            'ids.*' => 'required|numeric',
+            'status'    => ['sometimes', Rule::in(array_values(config('enums.item_status')))],
         ];
         return $rules;
     }

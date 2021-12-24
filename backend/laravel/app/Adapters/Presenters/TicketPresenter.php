@@ -3,28 +3,28 @@
 namespace App\Adapters\Presenters;
 
 use App\Adapters\ViewModels\JsonResourceViewModel;
-use App\Domain\Interfaces\Products\ProductEntity;
+use App\Domain\Interfaces\Tickets\TicketEntity;
 use App\Domain\Interfaces\ViewModel;
-use App\Domain\UseCases\Products\ProductOutputPort;
+use App\Domain\UseCases\Tickets\TicketOutputPort;
 use App\Http\Resources\ErrorResource;
 use App\Http\Resources\SuccessResource;
 use App\Http\Resources\ListResource;
-use App\Http\Resources\Products\ProductResource;
+use App\Http\Resources\Tickets\TicketResource;
 
 
-class ProductPresenter implements ProductOutputPort
+class TicketPresenter implements TicketOutputPort
 {
-    public function listProducts(object $list): ViewModel
+    public function listTickets(object $list): ViewModel
     {
         return new JsonResourceViewModel(
             new ListResource($list)
         );
     }
 
-    public function product(ProductEntity $product): ViewModel
+    public function ticket(TicketEntity $ticket): ViewModel
     {
         return new JsonResourceViewModel(
-            new ProductResource($product)
+            new TicketResource($ticket)
         );
     }
 
@@ -35,7 +35,7 @@ class ProductPresenter implements ProductOutputPort
         );
     }
 
-    public function fail(string $msg, int $code ): ViewModel
+    public function fail(string $msg, int $code): ViewModel
     {
         return new JsonResourceViewModel(
             new ErrorResource($msg, $code)
