@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Domain\Interfaces\UserEntity;
-use App\Domain\Interfaces\UserRepository;
+use App\Domain\Interfaces\Users\UserEntity;
+use App\Domain\Interfaces\Users\UserRepository;
 use App\Models\User;
 use App\Traits\RepositoryUtilsTrait;
 

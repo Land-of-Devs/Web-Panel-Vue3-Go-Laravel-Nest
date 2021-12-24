@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserEntity } from "src/core/entities/user.entity";
-import { JWTPayload } from "src/core/interfaces/jwt.initerface";
+import { JWTPayload } from "src/core/interfaces/jwt.interface";
 import { UserService } from "src/core/services/user.service";
 import { SigninDto } from "./dto/signin.dto";
 import { SignupDto } from "./dto/signup.dto";

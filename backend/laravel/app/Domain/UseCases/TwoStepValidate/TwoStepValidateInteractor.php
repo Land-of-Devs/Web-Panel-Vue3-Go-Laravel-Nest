@@ -2,8 +2,8 @@
 
 namespace App\Domain\UseCases\TwoStepValidate;
 
-use App\Domain\Interfaces\UserFactory;
-use App\Domain\Interfaces\UserRepository;
+use App\Domain\Interfaces\Users\UserFactory;
+use App\Domain\Interfaces\Users\UserRepository;
 use App\Domain\Interfaces\ViewModel;
 use RobThree\Auth\TwoFactorAuth;
 

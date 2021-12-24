@@ -9,7 +9,6 @@ import (
 )
 
 type SessionTokenData struct {
-	StaffAccessToken int64
 	AdminAccessToken int64
 	jwt.StandardClaims
 }

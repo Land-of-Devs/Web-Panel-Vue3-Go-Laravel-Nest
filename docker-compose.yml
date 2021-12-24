@@ -47,6 +47,7 @@ services:
     env_file:
       - .env
       - config/private/${ENV:-dev}/secrets.env
+      - config/private/${ENV:-dev}/super-secrets.env
     depends_on:
       - wp_db
 
@@ -88,6 +89,7 @@ services:
     env_file:
       - .env
       - config/private/${ENV:-dev}/secrets.env
+      - config/private/${ENV:-dev}/super-secrets.env
     command: sh /startgo.sh
     depends_on: 
       - wp_db

@@ -6,5 +6,5 @@ use App\Domain\Interfaces\ViewModel;
 
 interface TwoStepGenerateOutputPort
 {
-  public function codeGenerated(TwoStepGenerateResponseModel $model) : ViewModel;
+  public function codeGenerated(string $code) : ViewModel;
 }

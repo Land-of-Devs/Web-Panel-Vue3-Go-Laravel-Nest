@@ -112,6 +112,36 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 	}
 }
 
+func RefreshSession(c *gin.Context) {
+	useri, oku := c.Get("user")
+	sessioni, oks := c.Get("session")
+	if !oku || !oks { // if not logged in skip refreshing
+		c.Next()
+		return
+	}
+
+	user := useri.(users.UserModel)
+	session := *sessioni.(*utils.SessionTokenData)
+	now := time.Now().Unix()
+
+	if user.Role == Admin && now < session.AdminAccessToken {
+		// refresh admin access token only if currently valid
+		session.AdminAccessToken = now + 60*30 /* 30 min */
+	}
+
+	newTok, err := utils.CreateMainToken(session)
+
+	if err != nil {
+		fmt.Printf("error creating main token on refresh: %v\n", err)
+		c.Next()
+		return
+	}
+
+	SetSession(c, newTok)
+
+	c.Next()
+}
+
 func ReadSessionAdmin() func(*gin.Context) {
 	return ReadSessionEx(false, Admin, true)
 }

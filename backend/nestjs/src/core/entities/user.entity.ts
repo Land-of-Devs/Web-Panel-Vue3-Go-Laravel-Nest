@@ -18,9 +18,11 @@ export class UserEntity extends BaseEntity {
     this.created_at = new Date();
     this.email = email;
     this.username = username;
+    this.hash = null;
     this.password = password;
     this.role = UserRole.USER;
     this.verify = false;
+    this.two_step_secret = null;
   }
 
   @PrimaryColumn()
@@ -39,6 +41,9 @@ export class UserEntity extends BaseEntity {
   username: string;
 
   @Column()
+  hash: number;
+
+  @Column()
   email: string;
 
   @Column()
@@ -53,6 +58,9 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @Column()
+  two_step_secret: string;
+
   @BeforeInsert()
   async hashPassword() {
     const salt = await bcrypt.genSalt();
@@ -61,5 +69,12 @@ export class UserEntity extends BaseEntity {
 
   async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password);
+  }
+
+  serialize() {
+    let data = {...this};
+    delete data.password;
+    delete data.two_step_secret;
+    return data;
   }
 }

@@ -6,8 +6,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 
 //USER
-use App\Domain\Interfaces\UserFactory;
-use App\Domain\Interfaces\UserRepository;
+use App\Domain\Interfaces\Users\UserFactory;
+use App\Domain\Interfaces\Users\UserRepository;
 use App\Repositories\UserDbRepository;
 use App\Factories\UserModelFactory;
 

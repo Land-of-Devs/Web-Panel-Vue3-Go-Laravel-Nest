@@ -10,6 +10,7 @@ require (
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.3
+	github.com/xhit/go-simple-mail/v2 v2.10.0
 )
 
 require (

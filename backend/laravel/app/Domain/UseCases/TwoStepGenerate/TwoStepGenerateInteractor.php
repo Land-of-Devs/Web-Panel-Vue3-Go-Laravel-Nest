@@ -15,8 +15,6 @@ class TwoStepGenerateInteractor implements TwoStepGenerateInputPort
 
   public function generateCode(): ViewModel
   {
-    return $this->output->codeGenerated(
-      new TwoStepGenerateResponseModel($this->tfa->createSecret())
-    );
+    return $this->output->codeGenerated($this->tfa->createSecret());
   }
 }

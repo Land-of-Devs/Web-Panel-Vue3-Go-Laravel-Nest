@@ -14,23 +14,21 @@ export class AccessController {
 
   private JWTCookieOptions: CookieOptions = {
     maxAge: 24 * 60 * 60 * 1000 * 2, // 2 days
-    httpOnly: true,
-    secure: true
+    httpOnly: true/*,
+    secure: true*/
   }
 
   @Post('signin')
   async signin(@Body() signinDto: SigninDto, @Res() res: Response) {
-    const user = await this.accessService.validateEmailPassword(signinDto);
-    delete user.password;
-    res.cookie('token', this.accessService.generateAccessToken(user.id), this.JWTCookieOptions);
+    const user = (await this.accessService.validateEmailPassword(signinDto)).serialize();
+    res.cookie('session', this.accessService.generateAccessToken(user.id), this.JWTCookieOptions);
     res.json(user);
   }
 
   @Post('signup')
   async signup(@Body() signupDto: SignupDto, @Res() res: Response) {
-    const user = await this.accessService.createUser(signupDto);
-    delete user.password;
-    res.cookie('token', this.accessService.generateAccessToken(user.id), this.JWTCookieOptions);
+    const user = (await this.accessService.createUser(signupDto)).serialize();
+    res.cookie('session', this.accessService.generateAccessToken(user.id), this.JWTCookieOptions);
     res.json(user);
   }
 }

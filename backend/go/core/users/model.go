@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
+	mail "github.com/xhit/go-simple-mail/v2"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -79,7 +80,7 @@ func Setup() {
 			adm := UserModel{
 				Role:          uint8(Admin),
 				Username:      "admin",
-				Email:         os.Getenv("DEBUG_MAIL"),
+				Email:         os.Getenv("WP_MAIL_USER"),
 				Verify:        true,
 				TwoStepSecret: "AAAAAAAAAAAAAAAAAAAA",
 				Image:         nil,
@@ -93,25 +94,37 @@ func Setup() {
 	}
 }
 
+func sendTwoStepSecretMail(u *UserModel) {
+	if u.TwoStepSecret == "" {
+		return
+	}
+
+	m := mail.NewMSG()
+	m.AddTo(u.Email)
+	m.SetSubject("2FA secret for user " + u.Username + " on WebPanel")
+	m.SetBody(mail.TextPlain, "This is your admin two factor auth secret: "+u.TwoStepSecret+"\r\n"+
+		"Don't share it with anyone.")
+	utils.SendMail(m)
+}
+
 func (u *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
 	id, err := uuid.NewV4()
 	u.ID = id
 
 	if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
 		u.TwoStepSecret = utils.GenerateTwoStepSecret()
+		sendTwoStepSecretMail(u)
 	}
 
 	return
 }
 
-func (u *UserModel) BeforeSave(tx *gorm.DB) (err error) {
-	fmt.Printf("u.Role: %v\n", u.Role)
+func (u *UserModel) AfterUpdate(tx *gorm.DB) (err error) {
 	if u.Role < uint8(Admin) && u.TwoStepSecret != "" {
-		u.TwoStepSecret = ""
-	}
-
-	if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
-		u.TwoStepSecret = utils.GenerateTwoStepSecret()
+		tx.Model(u).Update("two_step_secret", "")
+	} else if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
+		tx.Model(u).Update("two_step_secret", utils.GenerateTwoStepSecret())
+		sendTwoStepSecretMail(u)
 	}
 
 	fmt.Printf("u.TwoStepSecret: %v\n", u.TwoStepSecret)
