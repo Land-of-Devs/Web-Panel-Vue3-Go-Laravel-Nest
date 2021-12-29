@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 	"webpanel/db"
 
 	"webpanel/utils"
@@ -184,4 +185,13 @@ func (model *UserModel) Update(data UserModel) error {
 	db := db.GetConnection()
 	err := db.Model(model).Updates(data).Error
 	return err
+}
+
+func FindAllUsersDateRange(fromDate time.Time, toDate time.Time) ([]UserModel, error) {
+	db := db.GetConnection()
+	var arrModel []UserModel
+
+	err := db.Where("created_at BETWEEN ? AND ?", fromDate, toDate).Find(&arrModel).Error
+
+	return arrModel, err
 }

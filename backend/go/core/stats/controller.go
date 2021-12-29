@@ -2,52 +2,107 @@ package stats
 
 import (
 	"time"
+	"webpanel/core/products"
 	"webpanel/core/users"
 
 	"github.com/gin-gonic/gin"
 )
 
 type RequestStats struct {
-	Time string `json:"time" form:"time" binding:"required"`
+	FromDate string `json:"from_date" form:"from_date" binding:"required"`
+	ToDate string `json:"to_date" form:"to_date" binding:"required"`
 }
 
 func GetCreatedUserStats(c *gin.Context) {
+	req := RequestStats{}
+	c.Bind(&req)
 
-	userList, err := users.FindAllUsers()
-
+	fromDate, err := time.Parse("2006-01-02", req.FromDate)
 	if err != nil {
 		c.Status(500)
 		return
 	}
+
+	toDate, err := time.Parse("2006-01-02", req.ToDate)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	userList, err := users.FindAllUsersDateRange(fromDate, toDate)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	var diffDays uint32 = (uint32(toDate.Sub(fromDate).Hours() / 24))
+	var dayseconds int64 = 86400
+
+	if diffDays > 100000 {
+		c.Status(500)
+		return
+	}
+
+	var list []uint32 = make([]uint32, diffDays)
+	fdu := fromDate.Unix()
+
+	for _, u := range userList {
+		list[(u.CreatedAt.Unix()/dayseconds)-(fdu/dayseconds)]++
+	}
+
+	c.JSON(200, gin.H{
+		"data": list,
+	})
+	/*
+
+	tsize, s := getTsizeAndNPoints(req.Time)
+
+	**/
+}
+
+
+func GetCreatedProductStats(c *gin.Context) {
 	req := RequestStats{}
 	c.Bind(&req)
 
-	var s int64
-	var list []uint32
-
-	var tsize int64 = 86400
-
-	switch req.Time {
-	case "YEAR":
-		s = 365
-	case "MONTH":
-		s = 30
-	case "WEEK":
-		s = 7
-	case "DAY":
-		s = 24
-		tsize = 3600
+	fromDate, err := time.Parse("2006-01-02", req.FromDate)
+	if err != nil {
+		c.Status(500)
+		return
 	}
 
-	list = make([]uint32, s)
+	toDate, err := time.Parse("2006-01-02", req.ToDate)
+	if err != nil {
+		c.Status(500)
+		return
+	}
 
-	for _, u := range userList {
-		t := u.CreatedAt.Unix()
-		p := (time.Now().Unix()/tsize)-(t/tsize);
-		if p < s {
-			list[p]++
+	productList, err := products.FindAllProductsDateRange(fromDate, toDate)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	var diffDays uint32 = (uint32(toDate.Sub(fromDate).Hours() / 24))
+	var dayseconds int64 = 86400
+
+	if diffDays > 100000 {
+		c.Status(500)
+		return
+	}
+
+	var list []uint32 = make([]uint32, diffDays)
+	fdu := fromDate.Unix()
+
+	for _, p := range productList {
+		if p.CreatorRefer != nil {
+			list[(p.CreatedAt.Unix()/dayseconds)-(fdu/dayseconds)]++
 		}
+
 	}
 
 	c.JSON(200, list)
+	c.JSON(200, gin.H{
+		"data": list,
+	})
 }
