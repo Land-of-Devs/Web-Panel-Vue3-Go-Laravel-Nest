@@ -36,6 +36,7 @@ func SetTestToken(c *gin.Context) {
 
 	tokstr, err := utils.CreateMainToken(utils.SessionTokenData{
 		StandardClaims: jwt.StandardClaims{Subject: usr.ID.String()},
+		AdminAccessToken: time.Now().Unix() + 60 *30,
 	})
 
 	if err != nil {

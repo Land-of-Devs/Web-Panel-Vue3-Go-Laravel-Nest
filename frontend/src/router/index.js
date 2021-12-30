@@ -32,7 +32,7 @@ const routes = [
         component: () => import('../components/panel/Products.vue')
       },
       {
-        path: 'Users',
+        path: 'users',
         name: 'Panel.Users',
         beforeEnter: (to, from, next) => priviledgeGuard(next, 3),
         component: () => import('../components/panel/Users.vue')

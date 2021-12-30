@@ -11,7 +11,7 @@
         <va-button text-color="primary" flat>Shop</va-button>
       </va-navbar-item>
       <va-navbar-item  v-if="role == 0" >
-        <va-button @click="signin" text-color="primary" flat>Login</va-button>
+        <va-button @click="signIn" text-color="primary" flat>Login</va-button>
       </va-navbar-item>
       <va-navbar-item v-if="role >= 2">
         <router-link to="Panel">
@@ -26,8 +26,8 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import useEmitter from '../composables/useEmitter';
-import SigninModalVue from './SigninModal.vue';
 import { useRoute } from 'vue-router';
+import SignInModalVue from './SignInModal.vue';
 
 export default {
   setup() {
@@ -44,12 +44,12 @@ export default {
 
     }
 
-    function signin() {
-      emitter.emit('modal/open', SigninModalVue);
+    function signIn() {
+      emitter.emit('modal/open', SignInModalVue);
     }
 
     return {
-      signin,
+      signIn,
       store,
       role,
       isInPanel

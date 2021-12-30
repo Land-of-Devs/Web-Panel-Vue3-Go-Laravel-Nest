@@ -1,4 +1,3 @@
-
 export const userRole = 1;
 export const employeeRole = 2;
 export const adminRole = 3;

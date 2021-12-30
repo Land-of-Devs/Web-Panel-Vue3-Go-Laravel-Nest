@@ -18,25 +18,25 @@
         class="mb-4" 
         v-model="state.form.password" 
         type="password"
-        @keyup.enter="formRef.validate() && signin()"
+        @keyup.enter="formRef.validate() && signIn()"
       ></va-input>
-      <div class="no-account">¿You don't have an account? <span @click="goSignup()">Sign up</span></div>
+      <div class="no-account">¿You don't have an account? <span @click="goSignUp()">Sign up</span></div>
 
     </va-form>
 
     <template #footer>
       <va-button text-color="primary" class="mr-1" @click="$emit('close')" flat>Cancel</va-button>
-      <va-button :loading="state.loading" text-color="white" class="ml-1" @click="formRef.validate() && signin()" gradient>Sign in</va-button>
+      <va-button :loading="state.loading" text-color="white" class="ml-1" @click="formRef.validate() && signIn()" gradient>Sign in</va-button>
     </template>
   </va-modal>
 </template>
 
 <script>
 import { reactive, ref } from 'vue';
-import useApi from '../composables/useApi';
+import * as auth from '../services/auth';
 import useEmitter from '../composables/useEmitter';
-import SignupModal from '../components/SignupModal.vue';
 import { useStore } from 'vuex';
+import SignUpModalVue from './SignUpModal.vue';
 
 export default {
   props: ['opened'],
@@ -52,13 +52,12 @@ export default {
       }
     });
 
-    const api = useApi();
     const emitter = useEmitter();
     const store = useStore();
 
-    function signin() {      
+    function signIn() {      
       state.loading = true;
-      api.signin(state.form)
+      auth.signIn(state.form)
       .then(({ data }) => {
         store.dispatch('user/setUser', data);
         emitter.emit('modal/close');
@@ -75,13 +74,13 @@ export default {
       }).finally(() => state.loading = false);
     }
 
-    function goSignup() {
-      emitter.emit('modal/open', SignupModal);
+    function goSignUp() {
+      emitter.emit('modal/open', SignUpModalVue);
     }
     
     return {
-      signin,
-      goSignup,
+      signIn,
+      goSignUp,
       state,
       formRef
     }
