@@ -6,7 +6,7 @@
 
 <script>
 import NavBar from './components/NavBar.vue';
-import Modal from './components/Modal.vue';
+import Modal from './components/global/Modal.vue';
 
 export default {
   components: {

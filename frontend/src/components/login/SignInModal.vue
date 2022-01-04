@@ -33,8 +33,8 @@
 
 <script>
 import { reactive, ref } from 'vue';
-import * as auth from '../services/auth';
-import useEmitter from '../composables/useEmitter';
+import * as auth from '../../services/auth';
+import useEmitter from '../../composables/useEmitter';
 import { useStore } from 'vuex';
 import SignUpModalVue from './SignUpModal.vue';
 
@@ -75,7 +75,7 @@ export default {
     }
 
     function goSignUp() {
-      emitter.emit('modal/open', SignUpModalVue);
+      emitter.emit('modal/open', {view: SignUpModalVue});
     }
     
     return {

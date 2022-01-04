@@ -27,7 +27,7 @@ class ProductDbRepository implements ProductRepository
         $list = Product::orderBy('created_at', 'desc')
         ->with('user')
         ->where('creator', $creator)
-        ->paginate(9);
+        ->paginate(10);
 
         return $list;
     }
@@ -35,7 +35,7 @@ class ProductDbRepository implements ProductRepository
     public function all(): object
     {
         return Product::with('user')->orderBy('created_at', 'desc')
-            ->paginate(9);
+            ->paginate(10);
     }
 
     public function create(ProductEntity $product, file $image): ?ProductEntity

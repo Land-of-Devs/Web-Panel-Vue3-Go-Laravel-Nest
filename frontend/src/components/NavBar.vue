@@ -27,7 +27,7 @@ import { computed } from 'vue';
 import { useStore } from 'vuex';
 import useEmitter from '../composables/useEmitter';
 import { useRoute } from 'vue-router';
-import SignInModalVue from './SignInModal.vue';
+import SignInModalVue from './login/SignInModal.vue';
 
 export default {
   setup() {
@@ -45,7 +45,7 @@ export default {
     }
 
     function signIn() {
-      emitter.emit('modal/open', SignInModalVue);
+      emitter.emit('modal/open', {view: SignInModalVue});
     }
 
     return {
