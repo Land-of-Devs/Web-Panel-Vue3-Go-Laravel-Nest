@@ -32,78 +32,124 @@
             @keyup.enter="formRef.validate()"
         ></va-input>
     </va-form>
-    <va-button text-color="primary" class="mr-1" @click="$emit('exit')" flat
-        >Cancel</va-button
-    >
-    <va-button
-        v-if="type === 'update'"
-        text-color="white"
-        class="ml-1"
-        @click="formRef.validate() && update()"
-        gradient
-        >Update</va-button
-    >
-    <va-button
-        v-else-if="type === 'create'"
-        text-color="white"
-        class="ml-1"
-        @click="formRef.validate() && create()"
-        gradient
-        >Create</va-button
-    >
+    <template v-if="action === 'update'">
+        <va-button text-color="primary" class="mr-1" @click="$emit('exit')" flat
+            >Cancel</va-button
+        >
+        <va-button
+            text-color="white"
+            class="ml-1"
+            @click="
+                formRef.validate() && (update(), $vaToast.init(state.toast))
+            "
+            gradient
+            >Update</va-button
+        >
+    </template>
+    <template v-else-if="action === 'create'">
+        <va-button
+            text-color="primary"
+            class="mr-1"
+            @click="$emit('close')"
+            flat
+            >Cancel</va-button
+        >
+        <va-button
+            text-color="white"
+            class="ml-1"
+            @click="
+                formRef.validate() && (create(), $vaToast.init(state.toast))
+            "
+            gradient
+            >Create</va-button
+        >
+    </template>
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, toRef } from "vue";
 import * as validator from "/src/utils/validator";
 export default {
-    props: ["product", "type"],
-    emits: ["exit"],
-    setup(props) {
+    props: ["product", "action"],
+    emits: ["exit", "close"],
+    setup(props, context) {
+        const createForm = reactive(props.product);
+        const newForm = toRef(props.product, "new");
         const val = validator;
-        const formRef = ref(null);
+        const formRef = ref({});
         const state = reactive({
             form: {
                 name: "",
                 image: [],
                 description: "",
-                price: null,
+                price: 0,
             },
             rules: {
                 name: [val.rules.required, val.rules.name, val.rules.string],
-                description: [
-                    val.rules.required,
-                    val.rules.string,
-                ],
+                description: [val.rules.required, val.rules.string],
                 price: [val.rules.number],
                 image: val.rules.file,
             },
+            toast: {
+                message: "",
+                color: "",
+                title: "",
+            },
         });
 
-        if (props.type == "update") {
+        if (props.action == "update") {
             state.form = {
-                name: props.product.name,
-                description: props.product.description,
-                price: props.product.price,
+                name: props.product.product.value.name,
+                description: props.product.product.value.description,
+                price: props.product.product.value.price,
             };
         }
 
-        function update() {
-            let form = new FormData();
+        async function update() {
+            let obj = {};
             state.form.price = parseInt(state.form.price);
-            form = val.update(props.product, state.form);
-            console.log(form)
+            obj = val.update(props.product.product.value, state.form);
+            if (!obj) {
+                state.toast = {
+                    message: "There isn't changes!",
+                    color: "warning",
+                    title: "Warning:",
+                };
+            } else {
+                state.toast = {
+                    message: "Product Updated!",
+                    color: "success",
+                    title: "Success:",
+                };
+                context.emit("exit");
+                newForm.value = obj;
+            }
         }
 
-        function create(){
-
+        function create() {
+            state.form.price = parseInt(state.form.price);
+            if (!state.form) {
+                state.toast = {
+                    message: "Couldn't create a Object!",
+                    color: "warning",
+                    title: "Warning:",
+                };
+            } else {
+                state.toast = {
+                    message: "Product Created!",
+                    color: "success",
+                    title: "Success:",
+                };
+                context.emit("close");
+                createForm.value = state.form;
+            }
         }
 
         return {
             state,
             formRef,
             update,
-            create
+            create,
         };
     },
 };

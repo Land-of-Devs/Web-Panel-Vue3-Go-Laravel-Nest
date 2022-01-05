@@ -34,7 +34,7 @@
 import * as formatter from "/src/utils/formatter";
 export default {
     props: ["product", "canEdit"],
-    emits: ["edit"],
+    emits: ["edit", "close"],
     setup(){
         const format = formatter
         return {

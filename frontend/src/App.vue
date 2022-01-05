@@ -40,4 +40,8 @@ body {
   margin-bottom: 5px;
 }
 
+.va-toast {
+    z-index: 100000 !important;
+}
+
 </style>

@@ -9,18 +9,26 @@ function constructList(res){
     }
 }
 
+function constructProduct(res){
+    return {
+        product: res.data.product
+    }
+}
+
 //------[ STAFF ENDPOINTS ]------\\
 export async function detailsStaff(slug) {
-
-    return await api.get('/staff/products/'+ slug);
+    let res = await api.get('/staff/products/'+ slug);
+    return constructProduct(res.data);
 }
 
 export async function create(form) {
-    return api.post('/staff/products', form);
+    let res = await api.post('/staff/products/', form);
+    return constructProduct(res.data);
 }
 
-export async  function update(slug ,form){
-    return api.post('/staff/products/'+ slug, form, {'_method': 'PUT'});
+export async function update(slug ,form){
+    let res = await api.post('/staff/products/'+ slug, form, {'_method': 'PUT'});
+    return constructProduct(res.data);
 }
 
 export async function del(slugs){

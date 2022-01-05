@@ -1,11 +1,21 @@
 <template>
-    <div class="flex">
-        <va-tabs v-model="productType">
+    <div class="action">
+        <va-tabs
+            class="list-type"
+            v-model="productType"
+            :grow="true"
+            :hide-slider="true"
+        >
             <template #tabs>
                 <va-tab name="all-products"> All Products </va-tab>
                 <va-tab name="my-products"> My Products </va-tab>
             </template>
         </va-tabs>
+        <div class="btn-actions">
+            <va-button color="success" gradient @click="productCrt()">
+                <va-icon name="note_add" />
+            </va-button>
+        </div>
     </div>
     <div class="datable">
         <va-data-table
@@ -45,19 +55,47 @@
 </template>
 
 <script>
+import * as validator from "/src/utils/validator";
 import { useProducts } from "/src/composables/useProducts";
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, toRefs, watch } from "vue";
 import useEmitter from "/src/composables/useEmitter";
 import UserPreviewVue from "./modals/UserPreview.vue";
 import ProductEditVue from "./modals/ProductEdit.vue";
+import ProductCreateVue from "./modals/ProductCreate.vue";
 
 export default defineComponent({
     async setup() {
+        const val = validator;
         const emitter = useEmitter();
         const productType = ref("all-products");
 
         const products = useProducts(productType);
-        const details = reactive({ product: {} });
+        const details = toRefs(products.details);
+        const newProduct = ref({});
+
+        watch(
+            () => details.new,
+            async (newVal) => {
+                if (Object.keys(newVal.value).length > 0) {
+                    await products.updateProduct(
+                        details.product.value["slug"],
+                        val.create(newVal.value)
+                    );
+                }
+            },
+            { deep: true }
+        );
+
+        watch(
+            () => newProduct,
+            async (newVal) => {
+                if (Object.keys(newVal.value).length > 0) {
+                    await products.createProduct(val.create(newProduct.value));
+                    Object.assign(newProduct, {});
+                }
+            },
+            { deep: true }
+        );
 
         await products.fetchProducts();
         const list = products.products;
@@ -72,20 +110,23 @@ export default defineComponent({
         ];
 
         function creatorPrev(user) {
-            console.log(user);
             emitter.emit("modal/open", { view: UserPreviewVue, data: user });
         }
 
         function productPrev(index) {
-            details.product = products.products.value.find(
-                (pr) => pr.id == index
-            );
-            console.log(details);
+            details.product.value = list.value.find((pr) => pr.id == index);
             emitter.emit("modal/open", { view: ProductEditVue, data: details });
         }
 
+        function productCrt() {
+            emitter.emit("modal/open", {
+                view: ProductCreateVue,
+                data: newProduct,
+            });
+        }
+
         const selectedItems = ref([]);
-        const rowDetails = ref({});
+
         return {
             products,
             productType,
@@ -96,7 +137,7 @@ export default defineComponent({
             creatorPrev,
             productPrev,
             selectedItems,
-            rowDetails,
+            productCrt,
         };
     },
 });
@@ -108,5 +149,16 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.action {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .list-type {
+        width: 40%;
+    }
+    .btn-actions {
+        margin-right: 10px;
+    }
 }
 </style>

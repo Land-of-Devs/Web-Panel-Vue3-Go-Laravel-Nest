@@ -10,15 +10,16 @@
         <template v-if="state.edit">
             <ProductForm
                 v-on:exit="state.edit = false"
-                :product="dataM.product"
-                :type="'update'"
+                v-on:close="$emit('close')"
+                :product="dataM"
+                :action="'update'"
             />
         </template>
         <template v-else>
             <ProductCard
                 v-on:edit="state.edit = true"
                 v-on:close="$emit('close')"
-                :product="dataM.product"
+                :product="dataM.product.value"
                 :canEdit="true"
             />
         </template>
@@ -41,7 +42,7 @@ export default {
         });
 
         return {
-            state
+            state,
         };
     },
 };
