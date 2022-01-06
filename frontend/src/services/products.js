@@ -39,20 +39,20 @@ export async function status(slugs){
     return api.put('/staff/products/status', slugs);
 }
 
-export async function staffList(){
-    let res = await api.get('/staff/products/all');
+export async function staffList(page, status){
+    let res = await api.get('/staff/products/all', { page: page, status: status});
     return constructList(res.data);
 }
 
-export async function myList(){
-    let res = await api.get('/staff/products');
+export async function myList(page, status){
+    let res = await api.get('/staff/products', { page: page, status: status });
     return constructList(res.data);
     
 }
 
 //------[ CLIENT ENDPOINTS ]------\\
-export async function clientList(){
-    let res = await api.get('/user/products');
+export async function clientList(page, status){
+    let res = await api.get('/user/products', {page: page, status: status});
     return constructList(res.data);
 }
 

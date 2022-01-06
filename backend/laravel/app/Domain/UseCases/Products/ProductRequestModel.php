@@ -9,7 +9,7 @@ class ProductRequestModel
         private array $attributes,
     ) {
     }
-
+    
     public function getName(): ?string
     {
         return $this->attributes['name'] ?? null;

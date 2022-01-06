@@ -24,17 +24,38 @@ class ProductDbRepository implements ProductRepository
     public function myProducts(): object
     {
         $creator =  auth()->user()->id;
+        $where = [
+            array(
+                'key' => 'status',
+                'exp' => '=',
+                'value' => request('status')
+            ),
+            array(
+                'key' => 'creator',
+                'exp' => '=',
+                'value' => $creator
+            )
+        ];
         $list = Product::orderBy('created_at', 'desc')
-        ->with('user')
-        ->where('creator', $creator)
-        ->paginate(10);
+            ->with('user')
+            ->where(self::cleanWhere($where))
+            ->paginate(10);
 
         return $list;
     }
 
     public function all(): object
     {
+        $where = [
+            array(
+                'key' => 'status',
+                'exp' => '=',
+                'value' => request('status')? request('status') : ''
+            )
+        ];
+
         return Product::with('user')->orderBy('created_at', 'desc')
+            ->where(self::cleanWhere($where))
             ->paginate(10);
     }
 
@@ -69,17 +90,17 @@ class ProductDbRepository implements ProductRepository
         $toUpdate = $this->find($slug);
         if ($toUpdate->getCreator() == auth()->user()->id) {
             if ($product->getName()) {
-                    $toUpdate->setSlug( Str::slug($product->getName()) . '-' . time());
-                    $toUpdate->setName($product->getName());
-                }
+                $toUpdate->setSlug(Str::slug($product->getName()) . '-' . time());
+                $toUpdate->setName($product->getName());
+            }
 
             if ($image) {
-                    $toUpdate->setImage( FileUploader::update(
-                        $image, 
-                        $toUpdate->getName() . '-' . $toUpdate->getId(), 
-                        'img/products', 
-                        $toUpdate->getImage()
-                    ));
+                $toUpdate->setImage(FileUploader::update(
+                    $image,
+                    $toUpdate->getName() . '-' . $toUpdate->getId(),
+                    'img/products',
+                    $toUpdate->getImage()
+                ));
             }
             $toUpdate->fillProduct(self::cleanArray([
                 'description' => $product->description,
@@ -137,5 +158,4 @@ class ProductDbRepository implements ProductRepository
             throw $e;
         }
     }
-
 }

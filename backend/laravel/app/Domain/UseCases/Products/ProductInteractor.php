@@ -18,7 +18,7 @@ class ProductInteractor implements ProductInputPort
     ) {
     }
 
-    public function myProducts(): ViewModel
+    public function myProducts(ProductRequestModel $request): ViewModel
     {
         $success = $this->repository->myProducts();
         if ($success) {
@@ -28,9 +28,9 @@ class ProductInteractor implements ProductInputPort
         }
     }
 
-    public function all(): ViewModel
+    public function all(ProductRequestModel $request): ViewModel
     {
-        $success = $this->repository->all();
+        $success = $this->repository->all($request);
         if ($success) {
             return $this->output->listProducts($success);
         } else {

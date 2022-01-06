@@ -6,8 +6,8 @@ use App\Domain\Interfaces\ViewModel;
 
 interface ProductInputPort
 {
-    public function myProducts(): ViewModel;
-    public function all(): ViewModel;
+    public function myProducts(ProductRequestModel $request): ViewModel;
+    public function all(ProductRequestModel $request): ViewModel;
     public function show(string $slug): ViewModel;
     public function create(ProductRequestModel $request): ViewModel;
     public function update(string $slug, ProductRequestModel $request): ViewModel;

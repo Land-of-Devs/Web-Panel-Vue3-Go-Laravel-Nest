@@ -8,6 +8,7 @@ use App\Domain\UseCases\Products\ProductRequestModel;
 use App\Http\Requests\Products\ProductCreateRequest;
 use App\Http\Requests\Products\ProductUpdateRequest;
 use App\Http\Requests\Products\ProductSlugsRequest;
+use App\Http\Requests\Products\ProductListRequest;
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
@@ -17,9 +18,11 @@ class ProductController extends Controller
         private ProductInputPort $interactor,
     ) {}
 
-    public function index()
+    public function index(ProductListRequest $request)
     {
-        $viewModel = $this->interactor->myProducts();
+        $viewModel = $this->interactor->myProducts(
+            new ProductRequestModel($request->validated())
+        );
         
         if ($viewModel instanceof JsonResourceViewModel) {
             return $viewModel->getResource();
@@ -28,9 +31,11 @@ class ProductController extends Controller
         return null;
     }
 
-    public function all()
+    public function all(ProductListRequest $request)
     {
-        $viewModel = $this->interactor->all();
+        $viewModel = $this->interactor->all(
+            new ProductRequestModel($request->validated())
+        );
 
         if ($viewModel instanceof JsonResourceViewModel) {
             return $viewModel->getResource();

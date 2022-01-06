@@ -11,6 +11,14 @@
                 <va-tab name="my-products"> My Products </va-tab>
             </template>
         </va-tabs>
+        <div class="selector">
+        <va-select
+            class="mb-4"
+            label="Status"
+            v-model="status"
+            :options="['All', 'Pending', 'Accepted', 'Cancelled', 'Complete']"
+        />
+        </div>
         <div class="btn-actions">
             <va-button color="success" gradient @click="productCrt()">
                 <va-icon name="note_add" />
@@ -25,7 +33,7 @@
             :selectable="true"
             v-model="selectedItems"
             :clickable="true"
-            :loading="!list.length"
+            :loading="loading"
             :striped="true"
         >
             <template #header(user)>Creator</template>
@@ -50,7 +58,12 @@
                 /></va-button>
             </template>
         </va-data-table>
-        <va-pagination v-model="page" input :pages="totalPages" />
+        <va-pagination
+            v-model="page"
+            input
+            :pages="totalPages"
+            :per-page="list.length"
+        />
     </div>
 </template>
 
@@ -68,8 +81,9 @@ export default defineComponent({
         const val = validator;
         const emitter = useEmitter();
         const productType = ref("all-products");
-
         const products = useProducts(productType);
+        const status = ref(products.status);
+        const loading = ref(products.loading);
         const details = toRefs(products.details);
         const newProduct = ref({});
 
@@ -138,6 +152,8 @@ export default defineComponent({
             productPrev,
             selectedItems,
             productCrt,
+            status,
+            loading
         };
     },
 });
@@ -151,11 +167,15 @@ export default defineComponent({
     align-items: center;
 }
 .action {
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     .list-type {
         width: 40%;
+    }
+    .selector {
+        max-width: 300px;
     }
     .btn-actions {
         margin-right: 10px;

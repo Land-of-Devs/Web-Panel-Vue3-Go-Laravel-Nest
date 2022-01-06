@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-
-use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
