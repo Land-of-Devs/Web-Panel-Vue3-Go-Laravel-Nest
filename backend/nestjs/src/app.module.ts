@@ -1,15 +1,25 @@
+import { ProductController } from './product/product.controller';
+import { TicketModule } from './ticket/ticket.module';
+import { JwtModule } from '@nestjs/jwt';
+import { TicketController } from './ticket/ticket.controller';
+import { SessionMiddleware } from './core/middlewares/session.middleware';
 import { UserEntity } from './core/entities/user.entity';
-import { Module } from '@nestjs/common';
+import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AccessModule } from './access/access.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbconf from './db.conf';
+import jwtconf from './jwt.conf';
 import { CoreModule } from './core/core.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dbconf), 
     CoreModule,
-    AccessModule
+    AccessModule,
+    TicketModule,
+    ProductModule,
+    JwtModule.register(jwtconf)
   ],
 
   providers: [
@@ -18,4 +28,10 @@ import { CoreModule } from './core/core.module';
   exports: [
   ]
 })
-export class UserModule {}
+export class UserModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+      consumer
+        .apply(SessionMiddleware)
+        .forRoutes(TicketController, ProductController);
+  }
+}

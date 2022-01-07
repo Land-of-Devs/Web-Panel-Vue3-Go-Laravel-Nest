@@ -25,7 +25,7 @@ export class UserEntity extends BaseEntity {
     this.two_step_secret = null;
   }
 
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid' })
   id: string;
 
   @CreateDateColumn()
@@ -75,6 +75,16 @@ export class UserEntity extends BaseEntity {
     let data = {...this};
     delete data.password;
     delete data.two_step_secret;
+    delete data.deleted_at;
+    return data;
+  }
+
+  serializeFor(user: UserEntity = null) {
+    const data = this.serialize();
+    if (!user || user.id != this.id) {
+      delete data.email;
+    }
+
     return data;
   }
 }
