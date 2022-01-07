@@ -9,6 +9,9 @@
             <br />
             <div>Price: {{ product.price }}€</div>
             <br />
+            <div>Description: {{ product.description}}</div>
+            <br />
+        
             <div>
                 Creator:
                 {{ product.user.username }}#{{ format.hash(product.user.hash) }}

@@ -1,28 +1,43 @@
 <template>
     <div class="action">
-        <va-tabs
-            class="list-type"
-            v-model="productType"
-            :grow="true"
-            :hide-slider="true"
-        >
-            <template #tabs>
-                <va-tab name="all-products"> All Products </va-tab>
-                <va-tab name="my-products"> My Products </va-tab>
-            </template>
-        </va-tabs>
-        <div class="selector">
-        <va-select
-            class="mb-4"
-            label="Status"
-            v-model="status"
-            :options="['All', 'Pending', 'Accepted', 'Cancelled', 'Complete']"
-        />
+        <div class="tab-action">
+            <va-tabs
+                class="list-type"
+                v-model="productType"
+                :grow="true"
+                :hide-slider="true"
+            >
+                <template #tabs>
+                    <va-tab name="all-products"> All Products </va-tab>
+                    <va-tab name="my-products"> My Products </va-tab>
+                </template>
+            </va-tabs>
+            <div class="selector">
+                <va-select
+                    label="Status"
+                    v-model="status"
+                    class="flex"
+                    :options="[
+                        'All',
+                        'Pending',
+                        'Accepted',
+                        'Cancelled',
+                        'Complete',
+                    ]"
+                />
+            </div>
+            <div class="btn-actions">
+                <va-button color="success" gradient @click="productCrt()">
+                    <va-icon name="note_add" />
+                </va-button>
+            </div>
         </div>
-        <div class="btn-actions">
-            <va-button color="success" gradient @click="productCrt()">
-                <va-icon name="note_add" />
-            </va-button>
+        <div class="selected">
+            <Selected
+                v-if="selectedItems.length > 0 && role == 3"
+                v-on:confirm="selectAction($event)"
+                :selected="selected"
+            />
         </div>
     </div>
     <div class="datable">
@@ -30,7 +45,7 @@
             :items="list"
             :columns="columns"
             :current-page="page"
-            :selectable="true"
+            :selectable="role == 3"
             v-model="selectedItems"
             :clickable="true"
             :loading="loading"
@@ -53,7 +68,8 @@
                 <va-button color="primary" gradient @click="productPrev(id)"
                     ><va-icon name="preview"
                 /></va-button>
-                <va-button color="danger" gradient
+                <va-button color="danger" gradient v-if="role == 3"
+                @click="del(id)"
                     ><va-icon name="delete"
                 /></va-button>
             </template>
@@ -70,14 +86,21 @@
 <script>
 import * as validator from "/src/utils/validator";
 import { useProducts } from "/src/composables/useProducts";
-import { defineComponent, ref, toRefs, watch } from "vue";
+import { defineComponent, ref, toRefs, watch, computed } from "vue";
 import useEmitter from "/src/composables/useEmitter";
 import UserPreviewVue from "./modals/UserPreview.vue";
 import ProductEditVue from "./modals/ProductEdit.vue";
 import ProductCreateVue from "./modals/ProductCreate.vue";
+import Selected from "./shared/Selected.vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
+    components: {
+        Selected,
+    },
     async setup() {
+        const store = useStore();
+        const role = computed(() => store.getters["user/getRole"]);
         const val = validator;
         const emitter = useEmitter();
         const productType = ref("all-products");
@@ -86,6 +109,18 @@ export default defineComponent({
         const loading = ref(products.loading);
         const details = toRefs(products.details);
         const newProduct = ref({});
+        const selected = ref({
+            list: ["None", "Delete", "Status"],
+            values: {
+                Status: [
+                    "None",
+                    "Pending",
+                    "Accepted",
+                    "Cancelled",
+                    "Complete",
+                ],
+            },
+        });
 
         watch(
             () => details.new,
@@ -140,6 +175,21 @@ export default defineComponent({
         }
 
         const selectedItems = ref([]);
+        async function selectAction(action) {
+            let newItemsKey = selectedItems.value.map(({ slug }) => slug);
+            if (action.option === "Status") {
+                await products.statusProducts(newItemsKey, action.value);
+            } else {
+                await products.deleteProducts(newItemsKey);
+            }
+            selectedItems.value = [];
+        }
+
+        async function del(id) {
+            let index = list.value.findIndex(i => i.id == id);
+            let slug = list.value[index].slug;
+            await products.deleteProducts([slug]);
+        }
 
         return {
             products,
@@ -153,7 +203,11 @@ export default defineComponent({
             selectedItems,
             productCrt,
             status,
-            loading
+            loading,
+            selected,
+            selectAction,
+            del,
+            role
         };
     },
 });
@@ -167,18 +221,23 @@ export default defineComponent({
     align-items: center;
 }
 .action {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    .list-type {
-        width: 40%;
+    .tab-action {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        .list-type {
+            width: 40%;
+        }
+        .selector {
+        }
+        .btn-actions {
+            margin-right: 10px;
+        }
     }
-    .selector {
-        max-width: 300px;
-    }
-    .btn-actions {
-        margin-right: 10px;
+    .selected {
+        display: flex;
+        justify-content: space-evenly;
     }
 }
 </style>

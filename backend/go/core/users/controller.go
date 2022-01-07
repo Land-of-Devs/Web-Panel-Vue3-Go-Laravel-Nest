@@ -54,13 +54,16 @@ func UserUpdate(c *gin.Context) {
 }
 
 func UserList(c *gin.Context) {
-	myUserModels, err := FindAllUsersPag(c)
+	myUserModels, dataPager, err := FindAllUsersPag(c)
 	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"users": MultipleSerialize(myUserModels)})
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"users": MultipleSerialize(myUserModels), "pager": Pager(dataPager)})
 }
 
 func UserDelete(c *gin.Context) {

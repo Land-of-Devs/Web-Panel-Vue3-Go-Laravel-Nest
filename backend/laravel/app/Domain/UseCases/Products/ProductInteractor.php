@@ -84,9 +84,9 @@ class ProductInteractor implements ProductInputPort
 
         if ($success->result) {
             if ($success->count > 0) {
-                return $this->output->success('Products were successfully deleted!!!', 300, $success);
+                return $this->output->success('Products were successfully deleted!!!', 200, $success);
             } else {
-                return $this->output->success("Wasn't deleted any product!!", 300, $success);
+                return $this->output->success("Wasn't deleted any product!!", 200, $success);
             }
         } else {
             return $this->output->fail('Delete Failed!!!', 400);
@@ -99,9 +99,9 @@ class ProductInteractor implements ProductInputPort
 
         if ($success->result) {
             if ($success->count > 0) {
-                return $this->output->success('Product status were successfully changed!!!', 300, $success);
+                return $this->output->success('Product status were successfully changed!!!', 200, $success);
             } else {
-                return $this->output->success("Wasn't change any product status!!", 300, $success);
+                return $this->output->success("Wasn't change any product status!!", 200, $success);
             }
         } else {
             return $this->output->fail('Prodcut status change Failed!!!', 400);

@@ -69,3 +69,17 @@ func ParseJSON(c *gin.Context) (json.RawMessage, error) {
 	json.Unmarshal(jsonData, &data)
 	return data, err
 }
+
+type PageType struct {
+	TotalUsers int64
+	TotalPages int
+}
+
+func Pager(count int64, pageSize int) PageType {
+	float := int(count)/pageSize + 1
+	obj := PageType{
+		TotalUsers: count,
+		TotalPages: float,
+	}
+	return obj
+}

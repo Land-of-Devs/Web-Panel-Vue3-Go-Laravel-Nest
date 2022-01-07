@@ -32,11 +32,13 @@ export async function update(slug ,form){
 }
 
 export async function del(slugs){
-    return api.del('/staff/products/delete', slugs);
+    let res = await api.del('/staff/products/delete', slugs);
+    return res.data.data;
 }
 
 export async function status(slugs){
-    return api.put('/staff/products/status', slugs);
+    let res = await api.put('/staff/products/status', slugs);
+    return res.data.data;
 }
 
 export async function staffList(page, status){

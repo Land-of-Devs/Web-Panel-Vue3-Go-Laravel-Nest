@@ -61,12 +61,22 @@ export function useProducts(type) {
         }
     }
 
-    //Set Status
-    // const statusProduct = (indexs, status) => {
-    //     //if peticion success
-    //     //then
-    //     //for index in index products.value[index].status = status
-    // }
+    const statusProducts = async (indexs, value) => {
+        console.log(indexs)
+        let result = await productService.status({ slugs: indexs, status: value});
+        if (result.count > 0){
+            newData();
+            return result.efected
+        }
+    }
+
+    const deleteProducts = async (indexs) => {
+        let result = await productService.del({ slugs: indexs});
+        if (result.count > 0) {
+            newData();
+            return result.efected
+        }
+    }
 
     //------[ WATCHERS AND FUNC ]------\\
     const newData = async () => {
@@ -92,9 +102,11 @@ export function useProducts(type) {
         page,
         totalPages,
         changePage,
-        updateProduct,
-        details,
         createProduct,
-        status
+        updateProduct,
+        statusProducts,
+        deleteProducts,
+        details,
+        status,
     };
 }
