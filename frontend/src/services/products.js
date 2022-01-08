@@ -1,7 +1,8 @@
 import * as api from './api';
 
 //------[ PRIVATE FUNCTIONS ]------\\
-function constructList(res){
+function constructList(res) {
+    console.log(res.data.list)
     return {
         list: res.data.list.data,
         total: res.data.list.total,
@@ -54,7 +55,7 @@ export async function myList(page, status){
 
 //------[ CLIENT ENDPOINTS ]------\\
 export async function clientList(page, status){
-    let res = await api.get('/user/products', {page: page, status: status});
+    let res = await api.get('/user/product/list', {page: page, status: status});
     return constructList(res.data);
 }
 

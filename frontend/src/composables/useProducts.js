@@ -32,6 +32,7 @@ export function useProducts(type) {
 
         if (responsePromise !== null) {
             const response = responsePromise;
+            console.log(response)
             products.value = response.list;
             productCount.value = response.total;
             totalPages.value = response.totalPages;

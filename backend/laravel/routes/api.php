@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Tickets\TicketController;
 use App\Http\Controllers\Api\Internal\TwoStepCodeGenerateController;
 use App\Http\Controllers\Api\Internal\TwoStepCodeValidateController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Stats\StatsController;
 
 Route::group(['middleware' => 'goapi', 'prefix' => 'internal'], function () {
   Route::get('twostep/generate', TwoStepCodeGenerateController::class);
@@ -28,6 +29,10 @@ Route::group(['prefix' => 'staff', 'middleware' => ['auth:api','staff.only:api']
         Route::put('status', [TicketController::class, 'status']);
     });
     Route::resource('tickets', TicketController::class, ['only' => ['index', 'show']]);
+
+    Route::group(['prefix' => 'stats'], function() {
+      Route::get('tickets', [StatsController::class, 'getTicketStats']);
+    });
 
     // Route::group([
     //     'prefix' => 'auth',

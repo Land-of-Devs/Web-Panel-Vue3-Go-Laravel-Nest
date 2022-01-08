@@ -104,7 +104,7 @@ class ProductInteractor implements ProductInputPort
                 return $this->output->success("Wasn't change any product status!!", 200, $success);
             }
         } else {
-            return $this->output->fail('Prodcut status change Failed!!!', 400);
+            return $this->output->fail('Product status change Failed!!!', 400);
         }
     }
 }

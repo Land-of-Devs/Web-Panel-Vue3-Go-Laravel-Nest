@@ -22,9 +22,7 @@ export default {
         UserCard
     },
     props: ["opened", "dataM"],
-    setup(props) {
-
-        console.log(props.dataM, "Es")
+    setup() {
         return {};
     }
 };

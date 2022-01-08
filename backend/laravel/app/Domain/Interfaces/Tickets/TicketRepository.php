@@ -10,4 +10,5 @@ interface TicketRepository
     public function find(string $id): ?TicketEntity;
     public function status(array $ids, string $status): ?object;
     public function delete(array $ids): ?object;
+    public function betweenDate(string $from_date, string $to_date): array;
 }

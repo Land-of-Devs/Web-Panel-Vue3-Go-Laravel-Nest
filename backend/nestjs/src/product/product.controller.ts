@@ -13,8 +13,13 @@ export class ProductController {
     const page = Math.max(+req.query['page'] || 1, 1);
     const { data, total } = await this.prodServ.getPaged(page, 9);
     res.json({
-      data: data.map(p => p.serializeFor(user)),
-      total
+      data: {
+        list: {
+          data: data.map(p => p.serializeFor(user)),
+          current_page: page,
+          last_page: Math.ceil(total / 9) 
+        }
+      },
     });
   }
 }

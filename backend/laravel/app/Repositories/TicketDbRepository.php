@@ -15,6 +15,10 @@ class TicketDbRepository implements TicketRepository
         return Ticket::with('user')->find($id);
     }
 
+    public function betweenDate(string $from_date, string $to_date): array {
+        return Ticket::whereBetween('created_at',[$from_date, $to_date])->get()->toArray();
+    }
+
     
     public function all(): ?object
     {

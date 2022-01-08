@@ -31,6 +31,8 @@ body {
 }
 #app {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-err {

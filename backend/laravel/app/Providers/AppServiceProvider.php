@@ -42,6 +42,12 @@ use App\Factories\TicketModelFactory;
 use App\Http\Controllers\Api\Tickets\TicketController;
 use App\Repositories\TicketDbRepository;
 
+// STATS 
+use App\Adapters\Presenters\StatsPresenter;
+use App\Domain\UseCases\Stats\StatsInteractor;
+use App\Domain\UseCases\Stats\StatsInputPort;
+use App\Http\Controllers\Api\Stats\StatsController;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register()
@@ -119,6 +125,18 @@ class AppServiceProvider extends ServiceProvider
                     'output' => $app->make(TicketPresenter::class)
                 ]);
             });
+
+        // STATS
+        $this->app
+            ->when(StatsController::class)
+            ->needs(StatsInputPort::class)
+            ->give(function ($app){
+                return $app->make(StatsInteractor::class, [
+                    'output' => $app->make(StatsPresenter::class)
+                ]);
+            });
+
+
     }
 
     /**
