@@ -29,7 +29,7 @@
 <script>
 import { reactive } from "vue";
 import UserForm from "../forms/UserForm.vue";
-import UserCard from "../cards/UserCard.vue";
+import UserCard from "/src/components/global/cards/UserCard.vue";
 export default {
     components: {
         UserForm,

@@ -29,7 +29,7 @@
 <script>
 import { reactive } from "vue";
 import ProductForm from "../forms/ProductForm.vue";
-import ProductCard from "../cards/ProductCard.vue";
+import ProductCard from "/src/components/global/cards/ProductCard.vue";
 export default {
     components: {
         ProductForm,

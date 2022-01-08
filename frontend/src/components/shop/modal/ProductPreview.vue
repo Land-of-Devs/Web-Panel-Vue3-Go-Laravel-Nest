@@ -18,7 +18,7 @@
 
 <script>
 import { reactive } from "vue";
-import ProductCard from '/src/components/panel/cards/ProductCard.vue';
+import ProductCard from '/src/components/global/cards/ProductCard.vue';
 
 export default {
     components: {

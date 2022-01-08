@@ -88,8 +88,8 @@ import { defineComponent, ref, toRefs, watch, computed } from "vue";
 import useEmitter from "/src/composables/useEmitter";
 import UserEditVue from "./modals/UserEdit.vue";
 import UserCreateVue from "./modals/UserCreate.vue";
-import Selected from "./shared/Selected.vue";
-import RoleBadge from "./shared/RoleBadge.vue";
+import Selected from "/src/components/global/shared/Selected.vue";
+import RoleBadge from "/src/components/global/shared/RoleBadge.vue";
 import { useStore } from "vuex";
 
 export default defineComponent({

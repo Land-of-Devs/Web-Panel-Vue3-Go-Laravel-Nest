@@ -16,14 +16,13 @@ export function useUsers(type) {
     async function fetchUsers() {
 
         users.value = [];
+        console.log(search.value)
         let responsePromise = await userService.usersList(page.value, search.value !== '' ? search.value : null);
         if (responsePromise !== null) {
             const response = responsePromise;
-            console.log(response)
             users.value = response.users;
             usersCount.value = response.pager.totalUsers;
             totalPages.value = response.pager.totalPages;
-            console.log(totalPages.value)
             loading.value = false;
         } else {
             throw new Error(`Nothing was found!`);

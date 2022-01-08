@@ -27,12 +27,12 @@ export function useProducts(type) {
                 break;
             case 'client-products':
                 responsePromise = await productService.clientList(page.value, status.value !== 'All' ? status.value : null);
+                console.log(responsePromise)
                 break;
         }
 
         if (responsePromise !== null) {
             const response = responsePromise;
-            console.log(response)
             products.value = response.list;
             productCount.value = response.total;
             totalPages.value = response.totalPages;

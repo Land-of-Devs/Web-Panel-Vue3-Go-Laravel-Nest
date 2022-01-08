@@ -100,8 +100,8 @@ import useEmitter from "/src/composables/useEmitter";
 import UserPreviewVue from "./modals/UserPreview.vue";
 import ProductEditVue from "./modals/ProductEdit.vue";
 import ProductCreateVue from "./modals/ProductCreate.vue";
-import Selected from "./shared/Selected.vue";
-import StatusBadge from "./shared/StatusBadge";
+import Selected from "/src/components/global/shared/Selected.vue";
+import StatusBadge from "/src/components/global/shared/StatusBadge";
 import { useStore } from "vuex";
 
 export default defineComponent({

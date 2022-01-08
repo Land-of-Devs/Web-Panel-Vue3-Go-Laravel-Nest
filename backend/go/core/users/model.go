@@ -167,10 +167,15 @@ func FindAllUsersPag(c *gin.Context) ([]UserModel, utils.PageType, error) {
 	db := db.GetConnection()
 	var arrModel []UserModel
 	var count int64
+	var query string
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
-
-	err := db.Scopes(utils.Paginate(page, pageSize)).Find(&arrModel).Error
+	if c.Query("search") != ""{
+		query = "%" + c.Query("search") + "%"
+	}else {
+		query = "%%"
+	}
+	err := db.Scopes(utils.Paginate(page, pageSize)).Where("email LIKE ?", query).Find(&arrModel).Error
 	db.Model(&UserModel{}).Count(&count)
 	dataPager := utils.Pager(count, pageSize)
 	return arrModel, dataPager, err
