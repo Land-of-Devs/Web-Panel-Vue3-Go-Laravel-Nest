@@ -17,12 +17,22 @@ import (
 func handleError(c *gin.Context, err error) {
 	switch err {
 	case http.ErrNoCookie:
-		c.JSON(403, gin.H{
+		c.JSON(http.StatusForbidden, gin.H{
 			"error": "no-session",
 		})
 
+	case utils.ErrForbidden:
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": err.Error(),
+		})
+
+	case utils.ErrUnauthorized:
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": err.Error(),
+		})
+
 	default:
-		c.JSON(500, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 	}
@@ -125,7 +135,7 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 		}
 
 		if user.Role < roleRequired || (mustBeUpgraded && !hasAdminUpgrade) {
-			handleTokenError(optional, token, c, &utils.ErrForbidden{}, false)
+			handleTokenError(optional, token, c, utils.ErrUnauthorized, false)
 			return
 		}
 

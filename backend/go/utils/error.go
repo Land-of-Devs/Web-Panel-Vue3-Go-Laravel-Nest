@@ -6,11 +6,19 @@ import (
 	validator "github.com/go-playground/validator/v10"
 )
 
-type ErrForbidden struct{}
+type errForbidden struct{}
+type errUnauthorized struct{}
 
-func (e *ErrForbidden) Error() string {
+func (e *errForbidden) Error() string {
 	return "Forbidden"
 }
+
+func (e *errUnauthorized) Error() string {
+	return "Unauthorized"
+}
+
+var ErrForbidden error = &errForbidden{}
+var ErrUnauthorized error = &errUnauthorized{}
 
 type UtilsError struct {
 	Errors map[string]interface{} `json:"errors"`

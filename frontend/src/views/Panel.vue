@@ -48,13 +48,17 @@
                 </va-sidebar-item-content>
             </va-sidebar-item>
         </va-sidebar>
-        <div class="panel-body">
+        <div class="panel-body layout fluid gutter--xl">
             <suspense>
                 <template #default>
                     <router-view></router-view>
                 </template>
                 <template #fallback>
-                    <div>Loading.....</div>
+                    <va-card class="flex xs12 md6 offset--md3">
+                        <va-card-content>
+                            <va-progress-bar indeterminate>Loading...</va-progress-bar>
+                        </va-card-content>
+                    </va-card>
                 </template>
             </suspense>
         </div>

@@ -1,18 +1,21 @@
 import { createStore } from 'vuex';
 import { getCookieJson } from '../utils/cookie';
+import { adminAccessStore } from './adminaccess';
 import { userStore } from './user';
 
 export const store = createStore({
   modules: {
-    user: userStore
+    user: userStore,
+    adminaccess: adminAccessStore
   },
   plugins: [
     store => {
       try {
         if ('cookieStore' in window) {
           window.cookieStore.addEventListener('change', () => {
-            store.commit('user/SETUSER', getCookieJson('userdata'));
-          })
+            store.dispatch('user/setUser', getCookieJson('userdata'));
+            store.dispatch('adminaccess/setUntil', getCookieJson('adminaccess'));
+          });
         }
       } catch (e) {
         console.error(e);

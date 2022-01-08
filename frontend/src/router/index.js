@@ -3,13 +3,22 @@ import { store } from '../store';
 import Home from '../views/Home.vue';
 import Shop from '../views/Shop.vue';
 
-const priviledgeGuard = (next, role) => {
-    if (store.getters['user/getRole'] >= role) {
-        next();
-    } else {
-        next('/');
-    }
-}
+const privilegeGuard = (next, role) => {
+  if (store.getters['user/getRole'] >= role) {
+    next();
+  } else {
+    next('/');
+  }
+};
+
+const adminAccessGuard = (to, from, next) => {
+  if (!store.getters['adminaccess/getUntil']) {
+    console.log(to);
+    next('/panel/admin-access?to=' + encodeURIComponent(to.fullPath));
+  } else {
+    next();
+  }
+};
 
 const routes = [
   {
@@ -25,7 +34,7 @@ const routes = [
   {
     path: '/panel',
     name: 'Panel',
-    beforeEnter: (to, from, next) => priviledgeGuard(next, 2),
+    beforeEnter: (to, from, next) => privilegeGuard(next, 2),
     component: () => import('../views/Panel.vue'),
     children: [
       {
@@ -46,8 +55,17 @@ const routes = [
       {
         path: 'users',
         name: 'Panel.Users',
-        beforeEnter: (to, from, next) => priviledgeGuard(next, 3),
+        beforeEnter: [
+          (to, from, next) => privilegeGuard(next, 3),
+          adminAccessGuard
+        ],
         component: () => import('../components/panel/Users.vue')
+      },
+      {
+        path: 'admin-access',
+        name: 'Panel.AdminAccess',
+        beforeEnter: (to, from, next) => privilegeGuard(next, 3),
+        component: () => import('../components/panel/AdminAccess.vue')
       }
     ]
   }
