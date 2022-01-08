@@ -187,6 +187,7 @@ export default defineComponent({
         }
 
         const selectedItems = ref([]);
+        
         async function selectAction(action) {
             let newItemsKey = selectedItems.value.map(({ slug }) => slug);
             if (action.option === "Status") {

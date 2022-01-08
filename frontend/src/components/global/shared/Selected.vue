@@ -7,6 +7,7 @@
             width="40%"
         />
         <va-select
+            class="ml-3"
             v-if="action.option !== 'None' && selected.values[action.option]"
             label="Value"
             v-model="action.value"

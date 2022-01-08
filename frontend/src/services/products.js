@@ -32,15 +32,6 @@ export async function update(slug ,form){
     return constructProduct(res.data);
 }
 
-export async function del(slugs){
-    let res = await api.del('/staff/products/delete', slugs);
-    return res.data.data;
-}
-
-export async function status(slugs){
-    let res = await api.put('/staff/products/status', slugs);
-    return res.data.data;
-}
 
 export async function staffList(page, status){
     let res = await api.get('/staff/products/all', { page: page, status: status});
@@ -51,6 +42,17 @@ export async function myList(page, status){
     let res = await api.get('/staff/products', { page: page, status: status });
     return constructList(res.data);
     
+}
+
+//------[ ADMIN ENDPOINTS ]------\\
+export async function del(slugs){
+    let res = await api.del('/staff/products/delete', slugs);
+    return res.data.data;
+}
+
+export async function status(slugs){
+    let res = await api.put('/staff/products/status', slugs);
+    return res.data.data;
 }
 
 //------[ CLIENT ENDPOINTS ]------\\

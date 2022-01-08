@@ -27,7 +27,6 @@ export function useProducts(type) {
                 break;
             case 'client-products':
                 responsePromise = await productService.clientList(page.value, status.value !== 'All' ? status.value : null);
-                console.log(responsePromise)
                 break;
         }
 
@@ -63,16 +62,15 @@ export function useProducts(type) {
     }
 
     const statusProducts = async (indexs, value) => {
-        console.log(indexs)
-        let result = await productService.status({ slugs: indexs, status: value});
-        if (result.count > 0){
+        let result = await productService.status({ slugs: indexs, status: value });
+        if (result.count > 0) {
             newData();
             return result.efected
         }
     }
 
     const deleteProducts = async (indexs) => {
-        let result = await productService.del({ slugs: indexs});
+        let result = await productService.del({ slugs: indexs });
         if (result.count > 0) {
             newData();
             return result.efected

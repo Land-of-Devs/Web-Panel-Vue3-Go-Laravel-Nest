@@ -21,7 +21,7 @@ class TicketInteractor implements TicketInputPort
         if ($success) {
             return $this->output->listTickets($success);
         } else {
-            return $this->output->fail('List of Products Not Found!!!', 404);
+            return $this->output->fail('List of Tickets Not Found!!!', 404);
         }
     }
 
@@ -31,7 +31,7 @@ class TicketInteractor implements TicketInputPort
         if ($success) {
             return $this->output->ticket($success);
         } else {
-            return $this->output->fail('Product Not Found!!!', 404);
+            return $this->output->fail('Tickets Not Found!!!', 404);
         }
     }
 
@@ -41,9 +41,9 @@ class TicketInteractor implements TicketInputPort
 
         if ($success->result) {
             if ($success->count > 0) {
-                return $this->output->success('Products were successfully deleted!!!', 300, $success);
+                return $this->output->success('Tickets were successfully deleted!!!', 200, $success);
             } else {
-                return $this->output->success("Wasn't deleted any product!!", 300, $success);
+                return $this->output->success("Wasn't deleted any Ticket!!", 200, $success);
             }
         } else {
             return $this->output->fail('Delete Failed!!!', 400);
@@ -56,12 +56,12 @@ class TicketInteractor implements TicketInputPort
 
         if ($success->result) {
             if ($success->count > 0) {
-                return $this->output->success('Product status were successfully changed!!!', 300, $success);
+                return $this->output->success('Ticket status were successfully changed!!!', 200, $success);
             } else {
-                return $this->output->success("Wasn't change any product status!!", 300, $success);
+                return $this->output->success("Wasn't change any ticket status!!", 200, $success);
             }
         } else {
-            return $this->output->fail('Prodcut status change Failed!!!', 400);
+            return $this->output->fail('Ticket status change Failed!!!', 400);
         }
     }
 }

@@ -21,9 +21,16 @@
                 </va-sidebar-item-content>
             </va-sidebar-item>
 
+            <va-sidebar-item :to="{ name: 'Panel.Tickets' }">
+                <va-sidebar-item-content>
+                    <va-icon name="description" />
+                    <va-sidebar-item-title> Tickets </va-sidebar-item-title>
+                </va-sidebar-item-content>
+            </va-sidebar-item>
+
             <va-sidebar-item :to="{ name: 'Panel.Products' }">
                 <va-sidebar-item-content>
-                    <va-icon name="category" />
+                    <va-icon name="local_mall" />
                     <va-sidebar-item-title> Products </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>

@@ -1,6 +1,6 @@
 import * as api from './api';
 
-//------[ STAFF ENDPOINTS ]------\\
+//------[ ADMIN ENDPOINTS ]------\\
 export async function create(form) {
     let res = await api.post('/admin/users/create', form);
     return res.data;
