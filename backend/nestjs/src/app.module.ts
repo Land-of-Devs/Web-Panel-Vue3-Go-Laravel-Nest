@@ -8,9 +8,9 @@ import { Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AccessModule } from './access/access.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbconf from './db.conf';
-import jwtconf from './jwt.conf';
 import { CoreModule } from './core/core.module';
 import { ProductModule } from './product/product.module';
+import { AppJWTModuleOptions } from './jwt.conf';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { ProductModule } from './product/product.module';
     AccessModule,
     TicketModule,
     ProductModule,
-    JwtModule.register(jwtconf)
+    JwtModule.register(AppJWTModuleOptions)
   ],
 
   providers: [

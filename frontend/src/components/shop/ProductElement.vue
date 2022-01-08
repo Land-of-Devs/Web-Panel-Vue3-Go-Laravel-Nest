@@ -9,7 +9,7 @@
       <va-card-title>{{ data.name }}</va-card-title>
       
       <va-card-content class="content">
-        Autor: {{ data.creator.username }}
+        Autor: {{ data.user.username }}
         <b>{{ data.price  }}€</b>
         {{ data.description }}
         <va-button @click="onView(data)">View</va-button>

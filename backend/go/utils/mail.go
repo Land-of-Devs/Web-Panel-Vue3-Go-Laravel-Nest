@@ -48,6 +48,12 @@ func mailSendLoop() {
 	fmt.Println("Initialized mail queue.")
 	client := getMailClient()
 	for mail := range mailQueue {
+		if err := client.Noop(); err != nil {
+			// the connection is probably closed, try to fix the issue by reconnecting
+			mailCli = nil
+			client = getMailClient()
+		}
+
 		err := mail.Send(client)
 
 		if err != nil {

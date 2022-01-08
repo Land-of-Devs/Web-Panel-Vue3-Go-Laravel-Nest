@@ -10,7 +10,7 @@ export class ProductEntity {
     this.name = name;
     this.description = description;
     this.price = price;
-    this.creator = creator;
+    this.user = creator;
     this.image = image;
     this.status = status;
     this.created_at = new Date();
@@ -35,7 +35,7 @@ export class ProductEntity {
   
   @JoinColumn({ name: 'creator' })
   @ManyToOne(() => UserEntity, usr => usr.id, { nullable: true, eager: true })
-  creator: UserEntity;
+  user: UserEntity;
   
   @Column()
   image: string;
@@ -51,14 +51,14 @@ export class ProductEntity {
 
   serialize() {
     const data = {...this};
-    data.creator = data.creator?.serialize();
+    data.user = data.user?.serialize();
 
     return data;
   }
 
   serializeFor(user: UserEntity = null) {
     const data = {...this};
-    data.creator = data.creator?.serializeFor(user);
+    data.user = data.user?.serializeFor(user);
     
     return data;
   }

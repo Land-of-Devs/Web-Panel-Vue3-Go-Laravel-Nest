@@ -35,7 +35,7 @@
 import { reactive, ref } from 'vue';
 import * as auth from '../../services/auth';
 import useEmitter from '../../composables/useEmitter';
-import { useStore } from 'vuex';
+//import { useStore } from 'vuex';
 import SignUpModalVue from './SignUpModal.vue';
 
 export default {
@@ -53,13 +53,12 @@ export default {
     });
 
     const emitter = useEmitter();
-    const store = useStore();
+    //const store = useStore();
 
     function signIn() {      
       state.loading = true;
       auth.signIn(state.form)
-      .then(({ data }) => {
-        store.dispatch('user/setUser', data);
+      .then(() => {
         emitter.emit('modal/close');
       })
       .catch(e => {

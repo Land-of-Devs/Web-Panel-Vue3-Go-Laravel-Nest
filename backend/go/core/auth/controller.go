@@ -34,9 +34,10 @@ func SetTestToken(c *gin.Context) {
 		return
 	}
 
+	admaccess := time.Now().Unix() + 60*30
 	tokstr, err := utils.CreateMainToken(utils.SessionTokenData{
-		StandardClaims: jwt.StandardClaims{Subject: usr.ID.String()},
-		AdminAccessToken: time.Now().Unix() + 60 *30,
+		StandardClaims:   jwt.StandardClaims{Subject: usr.ID.String()},
+		AdminAccessToken: admaccess,
 	})
 
 	if err != nil {
@@ -45,7 +46,7 @@ func SetTestToken(c *gin.Context) {
 
 	fmt.Printf("tokstr: %v, uuid: %v\n", tokstr, usr.ID)
 
-	SetSession(c, tokstr)
+	SetSession(c, tokstr, &usr, admaccess)
 
 	c.JSON(200, gin.H{
 		"ok": true,
@@ -108,7 +109,7 @@ func UpgradeTokenToAdmin(c *gin.Context) {
 		return
 	}
 
-	SetSession(c, newTok)
+	SetSession(c, newTok, &user, session.AdminAccessToken)
 	c.JSON(200, gin.H{
 		"ok": true,
 	})

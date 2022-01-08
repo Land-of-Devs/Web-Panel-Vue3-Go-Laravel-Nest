@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"io/ioutil"
+	"net/textproto"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -82,4 +83,9 @@ func Pager(count int64, pageSize int) PageType {
 		TotalPages: float,
 	}
 	return obj
+}
+
+func IsAllowedImageType(mime textproto.MIMEHeader) bool {
+	ftype := mime.Get("content-type")
+	return ftype == "image/png" || ftype == "image/jpeg"
 }

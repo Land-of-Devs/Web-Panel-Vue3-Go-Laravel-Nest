@@ -3,12 +3,12 @@ import { AccessController } from './access.controller';
 import { CoreModule } from 'src/core/core.module';
 import { AccessService } from './access.service';
 import { JwtModule } from '@nestjs/jwt';
-import jwtconf from '../jwt.conf';
+import { AppJWTModuleOptions } from 'src/jwt.conf';
 
 @Module({
   imports: [
     CoreModule,
-    JwtModule.register(jwtconf)
+    JwtModule.register(AppJWTModuleOptions)
   ],
   controllers: [AccessController],
   providers: [AccessService]

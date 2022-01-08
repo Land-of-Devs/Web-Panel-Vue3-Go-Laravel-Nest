@@ -1,6 +1,7 @@
 package users
 
 import (
+	"mime/multipart"
 	"webpanel/utils"
 
 	"github.com/gin-gonic/gin"
@@ -14,12 +15,12 @@ const (
 
 type UserModelValidator struct {
 	User struct {
-		Username string `form:"username" json:"username" binding:"required,alphanum,min=4,max=255"`
-		Email    string `form:"email" json:"email" binding:"required,email"`
-		Password string `form:"password" json:"password" binding:"required,min=8,max=255"`
-		Image    string `form:"image" json:"image" binding:"omitempty,url"`
-		Role     uint8  `form:"role,default=1" json:"role" binding:"gte=1,lte=3"`
-		Verify   bool   `form:"verify" json:"verify" default:"false"`
+		Username string                `form:"username" json:"username" binding:"required,alphanum,min=4,max=255"`
+		Email    string                `form:"email" json:"email" binding:"required,email"`
+		Password string                `form:"password" json:"password" binding:"required,min=8,max=255"`
+		Image    *multipart.FileHeader `form:"image" json:"image" binding:"omitempty"`
+		Role     uint8                 `form:"role" json:"role" binding:"gte=1,lte=3"`
+		Verify   bool                  `form:"verify" json:"verify" default:"false"`
 	} `json:"user"`
 	userModel       UserModel `json:"-"`
 	oldPasswordHash string    `json:"-"`
@@ -31,6 +32,10 @@ func (userMV *UserModelValidator) Bind(c *gin.Context) error {
 		return err
 	}
 
+	if userMV.User.Role == 0 {
+		userMV.User.Role = 1
+	}
+
 	userMV.userModel.Username = userMV.User.Username
 	userMV.userModel.Email = userMV.User.Email
 	userMV.userModel.Role = userMV.User.Role
@@ -40,9 +45,6 @@ func (userMV *UserModelValidator) Bind(c *gin.Context) error {
 		userMV.userModel.setPassword(userMV.User.Password)
 	}
 
-	if userMV.User.Image != "" {
-		userMV.userModel.Image = &userMV.User.Image
-	}
 	return nil
 }
 
@@ -62,8 +64,7 @@ func NewUserModelValidatorFillWith(userModel UserModel) UserModelValidator {
 	userModelValidator.User.Password = userModel.PasswordHash
 	userModelValidator.oldPasswordHash = userModel.PasswordHash
 
-	if userModel.Image != nil {
-		userModelValidator.User.Image = *userModel.Image
-	}
+	userModelValidator.User.Image = nil
+
 	return userModelValidator
 }

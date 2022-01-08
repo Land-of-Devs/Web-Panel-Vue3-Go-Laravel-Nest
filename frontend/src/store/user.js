@@ -1,27 +1,26 @@
+import { getCookieJson } from "../utils/cookie";
+
 export const userRole = 1;
 export const employeeRole = 2;
 export const adminRole = 3;
 
-let udata = localStorage.getItem('userData');
 const udata_guest = {
   role: 0
 }
 
-try {
-  udata = udata ? JSON.parse(udata) : udata_guest;
-} catch (e) {
-  udata = udata_guest;
-}
-
-if (udata_guest == udata) {
-  localStorage.setItem('userData', JSON.stringify(udata));
-}
-
 export const userStore = {
   namespaced: true,
-  state: udata,
+  state: getCookieJson('userdata') || udata_guest,
   mutations: {
     SETUSER(state, user) {
+      if (user == null) {
+        for (const [k] of Object.entries(state)) {
+          delete state[k];
+        }
+
+        user = udata_guest;
+      }
+
       for (const [k, v] of Object.entries(user)) {
         state[k] = v;
       }
@@ -29,7 +28,6 @@ export const userStore = {
   },
   actions: {
     setUser(state, user) {
-      localStorage.setItem('userData', JSON.stringify(user));
       state.commit("SETUSER", user);
     }
   },

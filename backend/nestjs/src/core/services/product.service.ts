@@ -32,7 +32,7 @@ export class ProductService {
   }
 
   async getByOwner(creator: UserEntity): Promise<ProductEntity[]> {
-    return await this.prodRepo.find({creator, status: ItemStatus.COMPLETE});
+    return await this.prodRepo.find({user: creator, status: ItemStatus.COMPLETE});
   }
 
 }

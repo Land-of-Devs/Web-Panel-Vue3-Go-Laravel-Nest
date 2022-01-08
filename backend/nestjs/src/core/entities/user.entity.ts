@@ -34,9 +34,6 @@ export class UserEntity extends BaseEntity {
   @UpdateDateColumn()
   public updated_at: Date;
 
-  @DeleteDateColumn()
-  public deleted_at: Date;
-
   @Column()
   username: string;
 
@@ -75,7 +72,6 @@ export class UserEntity extends BaseEntity {
     let data = {...this};
     delete data.password;
     delete data.two_step_secret;
-    delete data.deleted_at;
     return data;
   }
 

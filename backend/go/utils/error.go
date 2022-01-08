@@ -35,6 +35,11 @@ func NewValidatorError(err error) UtilsError {
 func NewError(key string, err error) UtilsError {
 	res := UtilsError{}
 	res.Errors = make(map[string]interface{})
-	res.Errors[key] = err.Error()
+	if err == nil {
+		res.Errors[key] = key
+	} else {
+		res.Errors[key] = err.Error()
+	}
+
 	return res
 }

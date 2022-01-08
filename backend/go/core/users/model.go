@@ -127,9 +127,9 @@ func (u *UserModel) AfterUpdate(tx *gorm.DB) (err error) {
 	} else if u.Role == uint8(Admin) && u.TwoStepSecret == "" {
 		tx.Model(u).Update("two_step_secret", utils.GenerateTwoStepSecret())
 		sendTwoStepSecretMail(u)
+		fmt.Printf("u.TwoStepSecret: %v\n", u.TwoStepSecret)
 	}
 
-	fmt.Printf("u.TwoStepSecret: %v\n", u.TwoStepSecret)
 	return
 }
 

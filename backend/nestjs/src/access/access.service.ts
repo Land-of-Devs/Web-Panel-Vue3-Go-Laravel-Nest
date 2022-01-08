@@ -22,9 +22,11 @@ export class AccessService {
     if (user) {
       const valid = await user.validatePassword(dto.password);
 
-      if (valid) {
+      if (valid && !user.verify) {
+        throw new ForbiddenException('User not verified!');
+      } else if (valid) {
         return user;
-      } 
+      }
     }
 
     throw new ForbiddenException('Invalid email or password');

@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 	"webpanel/core/users"
 	"webpanel/utils"
@@ -26,18 +28,41 @@ func handleError(c *gin.Context, err error) {
 	}
 }
 
-func SetSession(c *gin.Context, tokstr string) {
+func SetSession(c *gin.Context, tokstr string, user *users.UserModel, adminAccess int64) {
 	var maxAge int = 60 * 60 * 24 * 2
+	var maxAgeUserData int = maxAge
+	var maxAgeAdminAccess int = (int)(adminAccess - time.Now().Unix())
+
+	var userDataStr string = ""
+	var adminAccessStr string = strconv.FormatInt(adminAccess, 10)
+
 	if len(tokstr) == 0 {
 		maxAge = -1
+		maxAgeUserData = -1
+		maxAgeAdminAccess = -1
+		adminAccessStr = ""
 	}
 
+	if user == nil || user.Role != Admin || maxAgeAdminAccess <= 0 {
+		maxAgeAdminAccess = -1
+		adminAccessStr = ""
+	}
+
+	if maxAgeUserData > 0 && user != nil {
+		if busr, err := json.Marshal(users.Serialize(*user)); err == nil {
+			userDataStr = string(busr)
+		}
+	}
+
+	c.SetSameSite(http.SameSiteStrictMode)
 	c.SetCookie("session", tokstr, maxAge, "/", "", false, true)
+	c.SetCookie("userdata", userDataStr, maxAgeUserData, "/", "", false, false)
+	c.SetCookie("adminaccess", adminAccessStr, maxAgeAdminAccess, "/", "", false, false)
 }
 
 func handleTokenError(optional bool, token *jwt.Token, c *gin.Context, err error, deleteToken bool) {
 	if token != nil && deleteToken {
-		SetSession(c, "")
+		SetSession(c, "", nil, 0)
 	}
 
 	if !optional {
@@ -99,8 +124,6 @@ func ReadSessionEx(optional bool, roleRequired uint8, mustBeUpgraded bool) func(
 			return
 		}
 
-		fmt.Printf("user: %v, data: %v\n", user, data)
-
 		if user.Role < roleRequired || (mustBeUpgraded && !hasAdminUpgrade) {
 			handleTokenError(optional, token, c, &utils.ErrForbidden{}, false)
 			return
@@ -137,7 +160,7 @@ func RefreshSession(c *gin.Context) {
 		return
 	}
 
-	SetSession(c, newTok)
+	SetSession(c, newTok, &user, session.AdminAccessToken)
 
 	c.Next()
 }
