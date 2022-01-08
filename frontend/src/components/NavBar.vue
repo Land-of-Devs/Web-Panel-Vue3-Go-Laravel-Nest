@@ -5,16 +5,20 @@
     </template>
     <template #right>
       <va-navbar-item>
-        <va-button text-color="primary" flat>Home</va-button>
+        <router-link :to="{name: 'Home'}">
+          <va-button text-color="primary" flat>Home</va-button>
+        </router-link>
       </va-navbar-item>
       <va-navbar-item>
-        <va-button text-color="primary" flat>Shop</va-button>
+        <router-link :to="{name: 'Shop'}" v-if="role >= 1">
+          <va-button text-color="primary" flat>Shop</va-button>
+        </router-link>
       </va-navbar-item>
       <va-navbar-item  v-if="role == 0" >
         <va-button @click="signIn" text-color="primary" flat>Login</va-button>
       </va-navbar-item>
       <va-navbar-item v-if="role >= 2">
-        <router-link to="Panel">
+        <router-link :to="{name: 'Panel'}">
           <va-button text-color="primary" flat>Panel</va-button>
         </router-link>
       </va-navbar-item>

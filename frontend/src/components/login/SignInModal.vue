@@ -69,6 +69,8 @@ export default {
           } else {
             state.err = message;
           }
+        } else {
+          state.err = 'Unknown error';
         }
       }).finally(() => state.loading = false);
     }

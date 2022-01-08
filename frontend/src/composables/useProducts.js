@@ -40,6 +40,10 @@ export function useProducts(type) {
             throw new Error(`This option list doesn't exist!`);
         }
     }
+    async function reportProduct(productId, title, message) {
+        let result = await productService.report(productId, title, message);
+        console.log(result);
+    }
 
     //------[ ACTIONS ]------\\
 
@@ -105,6 +109,7 @@ export function useProducts(type) {
         updateProduct,
         statusProducts,
         deleteProducts,
+        reportProduct,
         details,
         status,
     };

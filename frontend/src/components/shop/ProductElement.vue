@@ -13,6 +13,7 @@
         <b>{{ data.price  }}€</b>
         {{ data.description }}
         <va-button @click="onView(data)">View</va-button>
+        <va-button @click="onReport(data)">Report</va-button>
       </va-card-content>
     </va-card>
   </div>
@@ -23,6 +24,7 @@
 <script>
 import useEmitter from '../../composables/useEmitter'
 import ProductPreviewVue from './modal/ProductPreview.vue';
+import ReportProductVue from './modal/ReportProduct.vue';
 export default {
   props: ['data'], 
   emits: ['details'],
@@ -34,8 +36,13 @@ export default {
       emitter.emit('modal/open', {view: ProductPreviewVue, data: { product: data }});
     }
 
+    function onReport(data) {
+      emitter.emit('modal/open', {view: ReportProductVue, data: data });
+    }
+
     return {
-      onView
+      onView,
+      onReport
     }
 
   } 

@@ -65,3 +65,8 @@ export async function detailsClient(slug){
     let res = await api.get('user/details/' + slug );
     return constructList(res.data);
 }
+
+export async function report(productId, title, message) {
+    let res = await api.post('/user/ticket/product/report', {title, message, productId});
+    return res.data;
+}
