@@ -50,13 +50,10 @@ export function useUsers(type) {
         }
     }
 
-    // const verifyUsers = async (indexs) => {
-    //     let result = await productService.status({ slugs: indexs, status: value });
-    //     if (result.count > 0) {
-    //         newData();
-    //         return result.efected
-    //     }
-    // }
+    const verifyUsers = async (indexs) => {
+        await userService.verify({ uuids: indexs });
+        newData();
+    }
 
     const deleteUsers = async (indexs) => {
         await userService.del({ uuids: indexs });
@@ -92,5 +89,6 @@ export function useUsers(type) {
         deleteUsers,
         details,
         search,
+        verifyUsers
     };
 }

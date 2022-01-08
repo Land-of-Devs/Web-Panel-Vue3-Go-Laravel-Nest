@@ -8,11 +8,12 @@
             :disabled="state.rules.image(state.form.image)"
         />
         <va-input
-            :rules="[state.rules.name]"
+            :rules="state.rules.name"
             label="nombre"
             class="mb-4"
             type="text"
             v-model="state.form.name"
+            @keyup.enter="formRef.validate()"
         >
         </va-input>
         <va-input
@@ -128,11 +129,11 @@ export default {
 
         function create() {
             state.form.price = parseInt(state.form.price);
-            if (!state.form) {
+            if (state.form.image.length <= 0) {
                 state.toast = {
-                    message: "Couldn't create a Object!",
-                    color: "warning",
-                    title: "Warning:",
+                    message: "Couldn't create a Product, empty Image!",
+                    color: "danger",
+                    title: "Error:",
                 };
             } else {
                 state.toast = {

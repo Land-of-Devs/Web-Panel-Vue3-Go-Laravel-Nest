@@ -18,7 +18,6 @@ import (
 )
 
 type UserModel struct {
-	gorm.Model
 	ID            uuid.UUID `gorm:"type:uuid;primary_key"`
 	Username      string    `gorm:"uniqueIndex:userIdx;column:username"`
 	Hash          int       `gorm:"uniqueIndex:userIdx;column:hash"`
@@ -28,6 +27,8 @@ type UserModel struct {
 	Verify        bool      `gorm:"column:verify"`
 	PasswordHash  string    `gorm:"column:password;not null"`
 	TwoStepSecret string    `gorm:"column:two_step_secret"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 func (UserModel) TableName() string {
@@ -155,6 +156,11 @@ func DeleteUsers(uuids []uuid.UUID) {
 	db := db.GetConnection()
 	var model UserModel
 	db.Delete(&model, uuids)
+}
+func VerifyUsers(uuids []uuid.UUID) {
+	db := db.GetConnection()
+	var model UserModel
+	db.Model(&model).Where("id IN (?)", uuids).Update("verify", true)
 }
 
 func FindAllUsersPag(c *gin.Context) ([]UserModel, utils.PageType, error) {

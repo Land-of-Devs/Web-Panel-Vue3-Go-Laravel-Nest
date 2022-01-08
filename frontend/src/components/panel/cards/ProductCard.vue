@@ -9,15 +9,15 @@
             <br />
             <div>Price: {{ product.price }}€</div>
             <br />
-            <div>Description: {{ product.description}}</div>
+            <div>Description: {{ product.description }}</div>
             <br />
-        
+
             <div>
                 Creator:
                 {{ product.user.username }}#{{ format.hash(product.user.hash) }}
             </div>
             <br />
-            <div>Status: {{ product.status }}</div>
+            <div>Status: <StatusBadge :status="product.status" /></div>
             <br />
             <div>Created: {{ format.date(product.created_at) }}</div>
             <br />
@@ -35,14 +35,18 @@
 
 <script>
 import * as formatter from "/src/utils/formatter";
+import StatusBadge from "../shared/StatusBadge";
 export default {
+    components: {
+        StatusBadge,
+    },
     props: ["product", "canEdit"],
     emits: ["edit", "close"],
-    setup(){
-        const format = formatter
+    setup() {
+        const format = formatter;
         return {
-            format
+            format,
         };
-    }
+    },
 };
 </script>

@@ -4,7 +4,7 @@ import * as api from './api';
 function constructList(res){
     return {
         list: res.data.list.data,
-        page: res.data.list.current_page,
+        total: res.data.list.total,
         totalPages: res.data.list.last_page,
     }
 }

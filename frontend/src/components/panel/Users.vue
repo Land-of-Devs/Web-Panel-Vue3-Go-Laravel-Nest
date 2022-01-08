@@ -35,10 +35,28 @@
         >
             <template #header(username)>Name</template>
             <template #header(id)>Actions</template>
-            <template #cell(hash)="{ source: hash }">#{{ format.hash(hash) }}</template>
+            <template #header(image)>Avatar</template>
+            <template #cell(image)="{ source: image }">
+                <va-avatar
+                    v-if="image"
+                    square
+                    :src="'/api/data/img/users/' + image"
+                />
+                <va-avatar
+                    v-else
+                    square
+                    :src="'/api/data/img/users/default.png'"
+                />
+            </template>
+            <template #cell(hash)="{ source: hash }"
+                >#{{ format.hash(hash) }}</template
+            >
             <template #cell(verify)="{ source: verify }">
-                <va-icon v-if="verify" name='done' color="success" />
-                <va-icon v-else name='dangerous' color="danger" />
+                <va-icon v-if="verify" name="done" color="success" />
+                <va-icon v-else name="dangerous" color="danger" />
+            </template>
+            <template #cell(role)="{ source: role }">
+                <RoleBadge :role="role" />
             </template>
             <template #cell(id)="{ source: id }">
                 <va-button color="primary" gradient @click="userPrev(id)"
@@ -71,11 +89,13 @@ import useEmitter from "/src/composables/useEmitter";
 import UserEditVue from "./modals/UserEdit.vue";
 import UserCreateVue from "./modals/UserCreate.vue";
 import Selected from "./shared/Selected.vue";
+import RoleBadge from "./shared/RoleBadge.vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
     components: {
         Selected,
+        RoleBadge,
     },
     async setup() {
         const store = useStore();
@@ -98,7 +118,7 @@ export default defineComponent({
             async (newVal) => {
                 if (Object.keys(newVal.value).length > 0) {
                     await users.updateUser(
-                        details.product.value["id"],
+                        details.user.value["id"],
                         val.create(newVal.value)
                     );
                 }
@@ -118,16 +138,17 @@ export default defineComponent({
         );
 
         await users.fetchUsers();
-        console.log(users.users);
         const list = users.users;
         const page = users.page;
         const totalPages = users.totalPages;
         const columns = [
-            { key: "username", sortable: true },
-            { key: "email", sortable: true },
-            { key: "hash" },
-            { key: "verify", sortable: true },
-            { key: "id" },
+            { key: "image", verticalAlign: "middle" },
+            { key: "email", sortable: true, verticalAlign: "middle" },
+            { key: "username", sortable: true, verticalAlign: "middle" },
+            { key: "hash", verticalAlign: "middle" },
+            { key: "role", sortable: true, verticalAlign: "middle" },
+            { key: "verify", sortable: true, verticalAlign: "middle" },
+            { key: "id", verticalAlign: "middle" },
         ];
 
         function userPrev(index) {
@@ -145,17 +166,19 @@ export default defineComponent({
         const selectedItems = ref([]);
 
         async function selectAction(action) {
-            let newItemsKey = selectedItems.value.map(({ slug }) => slug);
-            if (action.option === "Status") {
-                console.log("a");
+            let newItemsKey = selectedItems.value.map(({ id }) => id);
+            if (action.option === "Verify") {
+                users.verifyUsers(newItemsKey);
             } else {
-                console.log(newItemsKey);
+                users.deleteUsers(newItemsKey);
             }
             selectedItems.value = [];
         }
 
         async function del(id) {
-            console.log(id);
+            let index = list.value.findIndex((i) => i.id == id);
+            let uuid = list.value[index].id;
+            await users.deleteUsers([uuid]);
         }
 
         return {

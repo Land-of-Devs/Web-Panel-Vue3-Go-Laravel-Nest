@@ -80,3 +80,18 @@ func UserDelete(c *gin.Context) {
 
 	DeleteUsers(uuids.Uuids)
 }
+
+func UserVerify(c *gin.Context) {
+	data, err := utils.ParseJSON(c)
+	var uuids struct {
+		Uuids []uuid.UUID
+	}
+	json.Unmarshal(data, &uuids)
+
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+
+	VerifyUsers(uuids.Uuids)
+}

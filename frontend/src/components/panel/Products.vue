@@ -53,8 +53,11 @@
         >
             <template #header(user)>Creator</template>
             <template #header(id)>Actions</template>
+            <template #header(image)>Product</template>
+            <template #cell(image)="{ source: image }">
+                <va-avatar square :src="'/api/data/img/products/' + image" />
+            </template>
             <template #cell(price)="{ source: price }">{{ price }}€</template>
-
             <template #cell(user)="{ source: user }">
                 <va-button
                     v-if="user.username"
@@ -64,12 +67,18 @@
                     >{{ user.username }}</va-button
                 >
             </template>
+            <template #cell(status)="{ source: status }">
+                <StatusBadge :status="status" />
+            </template>
             <template #cell(id)="{ source: id }">
                 <va-button color="primary" gradient @click="productPrev(id)"
                     ><va-icon name="preview"
                 /></va-button>
-                <va-button color="danger" gradient v-if="role == 3"
-                @click="del(id)"
+                <va-button
+                    color="danger"
+                    gradient
+                    v-if="role == 3"
+                    @click="del(id)"
                     ><va-icon name="delete"
                 /></va-button>
             </template>
@@ -92,11 +101,13 @@ import UserPreviewVue from "./modals/UserPreview.vue";
 import ProductEditVue from "./modals/ProductEdit.vue";
 import ProductCreateVue from "./modals/ProductCreate.vue";
 import Selected from "./shared/Selected.vue";
+import StatusBadge from "./shared/StatusBadge";
 import { useStore } from "vuex";
 
 export default defineComponent({
     components: {
         Selected,
+        StatusBadge,
     },
     async setup() {
         const store = useStore();
@@ -151,11 +162,12 @@ export default defineComponent({
         const page = products.page;
         const totalPages = products.totalPages;
         const columns = [
-            { key: "slug", sortable: true },
-            { key: "price", sortable: true },
-            { key: "user" },
-            { key: "status", sortable: true },
-            { key: "id" },
+            { key: "image", verticalAlign: "middle" },
+            { key: "slug", sortable: true, verticalAlign: "middle" },
+            { key: "user", verticalAlign: "middle" },
+            { key: "price", sortable: true, verticalAlign: "middle" },
+            { key: "status", sortable: true, verticalAlign: "middle" },
+            { key: "id", verticalAlign: "middle" },
         ];
 
         function creatorPrev(user) {
@@ -186,13 +198,12 @@ export default defineComponent({
         }
 
         async function del(id) {
-            let index = list.value.findIndex(i => i.id == id);
+            let index = list.value.findIndex((i) => i.id == id);
             let slug = list.value[index].slug;
             await products.deleteProducts([slug]);
         }
 
         return {
-            products,
             productType,
             list,
             page,
@@ -207,7 +218,7 @@ export default defineComponent({
             selected,
             selectAction,
             del,
-            role
+            role,
         };
     },
 });

@@ -10,15 +10,16 @@
         <template v-if="state.edit">
             <UserForm
                 v-on:exit="state.edit = false"
-                :user="dataM.user"
-                :type="'update'"
+                v-on:close="$emit('close')"
+                :user="dataM"
+                :action="'update'"
             />
         </template>
         <template v-else>
             <UserCard
                 v-on:edit="state.edit = true"
                 v-on:close="$emit('close')"
-                :product="dataM.user"
+                :user="dataM.user.value"
                 :canEdit="true"
             />
         </template>
@@ -35,11 +36,11 @@ export default {
         UserCard,
     },
     props: ["opened", "dataM"],
-    setup() {
+    setup(props) {
         const state = reactive({
             edit: false,
         });
-
+        console.log(props.dataM)
         return {
             state
         };

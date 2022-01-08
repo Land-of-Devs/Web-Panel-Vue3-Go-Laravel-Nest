@@ -1,8 +1,10 @@
 package users
 
 import (
-	"github.com/gofrs/uuid"
+	"time"
 	"webpanel/utils"
+
+	"github.com/gofrs/uuid"
 )
 
 type UserResponse struct {
@@ -13,6 +15,7 @@ type UserResponse struct {
 	Verify   bool      `json:"verify"`
 	Role     int8      `json:"role"`
 	Hash     int       `json:"hash"`
+	Joined   time.Time `json:"joined"`
 }
 
 type UsersResponse struct {
@@ -33,6 +36,7 @@ func Serialize(myUserModel UserModel) UserResponse {
 		Verify:   myUserModel.Verify,
 		Role:     int8(myUserModel.Role),
 		Hash:     myUserModel.Hash,
+		Joined:   myUserModel.CreatedAt,
 	}
 
 	return user
@@ -49,7 +53,7 @@ func MultipleSerialize(UsersModel []UserModel) []UserResponse {
 
 func Pager(dataPager utils.PageType) PagerResponse {
 	pager := PagerResponse{
-		TotalUsers:  dataPager.TotalUsers,
+		TotalUsers: dataPager.TotalUsers,
 		TotalPages: dataPager.TotalPages,
 	}
 	return pager

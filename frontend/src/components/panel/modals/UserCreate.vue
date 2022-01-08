@@ -10,7 +10,7 @@
         <UserForm
             v-on:exit="state.edit = false"
             v-on:close="$emit('close')"
-            :product="dataM"
+            :user="dataM"
             :action="'create'"
         />
     </va-modal>
