@@ -10,5 +10,5 @@ func InitRoutes(r *gin.RouterGroup) {
 	ctx := r.Group("/auth")
 	ctx.GET("/info", auth.ReadSessionEx(false, auth.User, false), auth.RefreshSession, auth.GetSessionInfo)
 	ctx.GET("/test-auth", auth.SetTestToken)
-	ctx.GET("/admin-session-upgrade", auth.ReadSessionEx(false, auth.Admin, false), auth.RefreshSession, auth.UpgradeTokenToAdmin)
+	ctx.POST("/admin-session-upgrade", auth.ReadSessionEx(false, auth.Admin, false), auth.RefreshSession, auth.UpgradeTokenToAdmin)
 }

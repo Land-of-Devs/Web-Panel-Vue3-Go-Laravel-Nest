@@ -1,95 +1,102 @@
 <template>
-    <div class="action">
-        <div class="tab-action">
-            <va-tabs
-                class="list-type"
-                v-model="productType"
-                :grow="true"
-                :hide-slider="true"
-            >
-                <template #tabs>
-                    <va-tab name="all-products"> All Products </va-tab>
-                    <va-tab name="my-products"> My Products </va-tab>
-                </template>
-            </va-tabs>
-            <div class="selector">
-                <va-select
-                    label="Status"
-                    v-model="status"
-                    class="flex"
-                    :options="[
-                        'All',
-                        'Pending',
-                        'Accepted',
-                        'Cancelled',
-                        'Complete',
-                    ]"
-                />
+    <va-card class="action mb-2">
+        <va-card-title>Product List</va-card-title>
+        <va-card-content>
+            <div class="tab-action row">
+                <div class="flex xs12 pb-0 pt-0">
+                    <va-tabs
+                        class="list-type"
+                        v-model="productType"
+                        :grow="true"
+                        :hide-slider="true"
+                    >
+                        <template #tabs>
+                            <va-tab name="all-products"> All Products </va-tab>
+                            <va-tab name="my-products"> My Products </va-tab>
+                        </template>
+                    </va-tabs>
+                </div>
+                <div class="selector flex xs9 md10 lg4">
+                    <va-select
+                        label="Status"
+                        v-model="status"
+                        class="flex pt-0 pb-0 pl-0 pr-0"
+                        :options="[
+                            'All',
+                            'Pending',
+                            'Accepted',
+                            'Cancelled',
+                            'Complete',
+                        ]"
+                    />
+                </div>
+                <div class="flex flex-center xs3 md2 lg2 offset--lg6 btn-actions">
+                    <va-button color="success" gradient @click="productCrt()">
+                        <va-icon name="note_add" />
+                    </va-button>
+                </div>
             </div>
-            <div class="btn-actions">
-                <va-button color="success" gradient @click="productCrt()">
-                    <va-icon name="note_add" />
-                </va-button>
-            </div>
-        </div>
-        <div class="selected">
             <Selected
                 v-if="selectedItems.length > 0 && role == 3"
                 v-on:confirm="selectAction($event)"
                 :selected="selected"
             />
-        </div>
-    </div>
-    <div class="datable">
-        <va-data-table
-            :items="list"
-            :columns="columns"
-            :current-page="page"
-            :selectable="role == 3"
-            v-model="selectedItems"
-            :clickable="true"
-            :loading="loading"
-            :striped="true"
-        >
-            <template #header(user)>Creator</template>
-            <template #header(id)>Actions</template>
-            <template #header(image)>Product</template>
-            <template #cell(image)="{ source: image }">
-                <va-avatar square :src="'/api/data/img/products/' + image" />
-            </template>
-            <template #cell(price)="{ source: price }">{{ price }}€</template>
-            <template #cell(user)="{ source: user }">
-                <va-button
-                    v-if="user.username"
-                    color="#ffac0a"
-                    gradient
-                    @click="creatorPrev(user)"
-                    >{{ user.username }}</va-button
-                >
-            </template>
-            <template #cell(status)="{ source: status }">
-                <StatusBadge :status="status" />
-            </template>
-            <template #cell(id)="{ source: id }">
-                <va-button color="primary" gradient @click="productPrev(id)"
-                    ><va-icon name="preview"
-                /></va-button>
-                <va-button
-                    color="danger"
-                    gradient
-                    v-if="role == 3"
-                    @click="del(id)"
-                    ><va-icon name="delete"
-                /></va-button>
-            </template>
-        </va-data-table>
-        <va-pagination
-            v-model="page"
-            input
-            :pages="totalPages"
-            :per-page="list.length"
-        />
-    </div>
+        </va-card-content>
+    </va-card>
+    <va-card class="datable">
+        <va-card-content>
+            <va-data-table
+                :items="list"
+                :columns="columns"
+                :current-page="page"
+                :selectable="role == 3"
+                v-model="selectedItems"
+                :clickable="true"
+                :loading="loading"
+                :striped="true"
+            >
+                <template #header(user)>Creator</template>
+                <template #header(id)>Actions</template>
+                <template #header(image)>Product</template>
+                <template #cell(image)="{ source: image }">
+                    <va-avatar square :src="'/api/data/img/products/' + image" />
+                </template>
+                <template #cell(price)="{ source: price }">{{ price }}€</template>
+                <template #cell(user)="{ source: user }">
+                    <va-button
+                        v-if="user.username"
+                        color="#ffac0a"
+                        gradient
+                        @click="creatorPrev(user)"
+                        >{{ user.username }}</va-button
+                    >
+                </template>
+                <template #cell(status)="{ source: status }">
+                    <StatusBadge :status="status" />
+                </template>
+                <template #cell(id)="{ source: id }">
+                    <va-button color="primary" gradient @click="productPrev(id)"
+                        ><va-icon name="preview"
+                    /></va-button>
+                    <va-button
+                        color="danger"
+                        gradient
+                        v-if="role == 3"
+                        @click="del(id)"
+                        ><va-icon name="delete"
+                    /></va-button>
+                </template>
+            </va-data-table>
+        </va-card-content>
+        <va-card-actions align="center">
+            <va-pagination
+                v-model="page"
+                input
+                :pages="totalPages"
+                :per-page="list.length"
+            />
+        </va-card-actions>
+    </va-card>
 </template>
 
 <script>
@@ -224,32 +231,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<style lang="scss" scoped>
-.datable {
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.action {
-    .tab-action {
-        margin-top: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        .list-type {
-            width: 40%;
-        }
-        .selector {
-        }
-        .btn-actions {
-            margin-right: 10px;
-        }
-    }
-    .selected {
-        display: flex;
-        justify-content: space-evenly;
-    }
-}
-</style>

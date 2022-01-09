@@ -11,6 +11,9 @@
                     <va-sidebar-item-title class="sidebar-title">
                         Panel Admin
                     </va-sidebar-item-title>
+                    <va-sidebar-item-title class="sidebar-title sidebar-title-minimized">
+                        PA
+                    </va-sidebar-item-title>
                 </va-sidebar-item-content>
             </va-sidebar-item>
 
@@ -105,6 +108,34 @@ export default {
         flex-direction: column;
         flex-grow: 1;
         width: 80%;
+        max-height: 100vh;
+        overflow-y: auto;
     }
+}
+
+.sidebar-title-minimized {
+  display: none;
+}
+
+@media screen and (max-width: 576px) {
+
+  .va-sidebar {
+    width: min-content!important;
+  }
+
+  .va-sidebar-item-title {
+    display: none;
+  }
+
+  .sidebar-title-minimized {
+    display: block;
+  }
+}
+
+</style>
+
+<style lang="scss">
+.va-pagination__input {
+    min-width: 50px;
 }
 </style>

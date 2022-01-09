@@ -63,8 +63,7 @@ func UpgradeTokenToAdmin(c *gin.Context) {
 	}
 
 	tsv := NewTwoStepValidator()
-	/* TODO: change to tsv.Bind(c) when endpoint method changes to POST */
-	if err := c.ShouldBindQuery(&tsv); err != nil {
+	if err := tsv.Bind(c); err != nil {
 		c.Status(400)
 		return
 	}

@@ -1,21 +1,20 @@
 <template>
-    <div class="selectable">
-        <va-select
-            label="Action"
-            v-model="action.option"
-            :options="selected.list"
-            width="40%"
-        />
-        <va-select
-            class="ml-3"
-            v-if="action.option !== 'None' && selected.values[action.option]"
-            label="Value"
-            v-model="action.value"
-            :options="selected.values[action.option]"
-            width="40%"
-        />
-    </div>
-    <div class="confirm">
+    <div class="row">
+        <div class="flex xs6 md4">
+            <va-select
+                label="Action"
+                v-model="action.option"
+                :options="selected.list"
+            />
+        </div>
+        <div class="flex xs6 md4">
+            <va-select
+                v-if="action.option !== 'None' && selected.values[action.option]"
+                label="Value"
+                v-model="action.value"
+                :options="selected.values[action.option]"
+            />
+        </div>
         <template
             v-if="
                 action.option !== 'None' &&
@@ -23,22 +22,23 @@
                     !selected.values[action.option])
             "
         >
-            <va-switch
-                v-model="action.confirm"
-                false-inner-label="Confirm"
-                color="warning"
-            />
-            <va-button
-                v-if="action.confirm"
-                color="warning"
-                gradient
-                @click="$emit('confirm', action)"
-            >
-                <va-icon name="output" />
-            </va-button>
-            <va-button v-else disabled color="warning" gradient>
-                <va-icon name="output" />
-            </va-button>
+            <div class="flex flex-center xs6 md2">
+                <va-switch
+                    v-model="action.confirm"
+                    false-inner-label="Confirm"
+                    color="warning"
+                />
+            </div>
+            <div class="flex flex-center xs6 md2">
+                <va-button
+                    :disabled="!action.confirm"
+                    color="warning"
+                    gradient
+                    @click="$emit('confirm', action)"
+                >
+                    <va-icon name="output" />
+                </va-button>
+            </div>
         </template>
     </div>
 </template>
@@ -61,13 +61,3 @@ export default defineComponent({
     },
 });
 </script>
-
-
-<style lang="scss" scoped>
-.selectable {
-    display: flex;
-}
-.confirm {
-    display: flex;
-}
-</style>

@@ -34,4 +34,5 @@ export const rules = {
     string: (value) => (/^[a-z0-9.\-:;()\\!? \n]+$/i.test(value)) || 'Needs to be a string and can contain [,-:;()]',
     name: (value) => (/^((?:\w+)\s{0,1}(?:\w*)){1,4}$/gm.test(value)) || 'Only 4 spaces are allowed',
     password: (value) => (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm.test(value) || !value )|| 'Needs 8 chars, min 1 upper, 1 lower and 1 number and can contain special chars',
+    twostepcode: (value) => (typeof value === 'string' && /^[0-9]{6}$/.test(value)) || 'Enter the 6 digit 2FA code'
 }

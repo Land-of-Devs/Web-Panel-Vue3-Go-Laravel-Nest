@@ -11,3 +11,7 @@ export function signUp(form) {
 export function signOut(form) {
   return api.get('/user/access/signout/', form);
 }
+
+export function adminUpgrade(form) {
+  return api.post('/admin/auth/admin-session-upgrade', form);
+}
