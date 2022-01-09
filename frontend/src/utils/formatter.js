@@ -7,6 +7,10 @@ export const date = (dateString) => {
     })
 }
 
+export const toJSONDateString = date => {
+    return date.toJSON().split('T')[0];
+}
+
 export const hash = (hash) => {
     const digits = hash.toString().length;
     return digits === 1 ? '000' + hash :
