@@ -1,5 +1,5 @@
 import { SigninDto } from './dto/signin.dto';
-import { Body, Controller, ForbiddenException, Post, Res } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Res } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
 import { Response } from 'express';
 import { AccessService } from './access.service';
@@ -33,5 +33,13 @@ export class AccessController {
     res.cookie('userdata', JSON.stringify(user), AppCookieOptions.userdata);
 
     res.json({ok: true});
+  }
+
+  @Get('signout')
+  async signout(@Res() res: Response) {
+    res.clearCookie('session', {...AppCookieOptions.jwt, maxAge: -1});
+    res.clearCookie('userdata', {...AppCookieOptions.userdata, maxAge: -1});
+    res.clearCookie('adminaccess', {...AppCookieOptions.adminaccess, maxAge: -1});
+    res.end();
   }
 }

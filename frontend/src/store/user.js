@@ -19,7 +19,7 @@ export const userStore = {
     },
     DELUSER(state) {
       for (const [k] of Object.entries(state)) {
-        delete state[k];
+        state[k] = udata_guest[k];
       }
     }
   },
@@ -34,6 +34,9 @@ export const userStore = {
     }
   },
   getters: {
+    getUser(state) {
+      return state;
+    },
     getRole(state) {
       return state.role;
     }
