@@ -9,6 +9,6 @@ import (
 
 func InitRoutes(r *gin.RouterGroup) {
 	ctx := r.Group("/stats").Use(auth.ReadSessionAdmin(), auth.RefreshSession)
-	ctx.POST("/created_users", stats.GetCreatedUserStats)
-	ctx.POST("/created_products", stats.GetCreatedProductStats)
+	ctx.GET("/created_users", stats.GetCreatedUserStats)
+	ctx.GET("/created_products", stats.GetCreatedProductStats)
 }

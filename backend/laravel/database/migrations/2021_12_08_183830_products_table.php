@@ -27,6 +27,7 @@ class ProductsTable extends Migration
                     $table->string('image')->nullable();
                     $table->enum('status', config('enums.item_status'))->default(config('enums.item_status.PENDING'));
                     $table->timestamps();
+                    $table->softDeletes();
                 });
                 $migrate = true;
             }

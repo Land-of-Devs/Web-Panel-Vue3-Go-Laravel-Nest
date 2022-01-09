@@ -1,6 +1,7 @@
 package stats
 
 import (
+	"fmt"
 	"time"
 	"webpanel/core/products"
 	"webpanel/core/users"
@@ -8,22 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RequestStats struct {
-	FromDate string `json:"from_date" form:"from_date" binding:"required"`
-	ToDate string `json:"to_date" form:"to_date" binding:"required"`
-}
-
 func GetCreatedUserStats(c *gin.Context) {
-	req := RequestStats{}
-	c.Bind(&req)
 
-	fromDate, err := time.Parse("2006-01-02", req.FromDate)
+	fromDate, err := time.Parse("2006-01-02", c.DefaultQuery("from_date", ""))
 	if err != nil {
+		fmt.Print(err)
 		c.Status(500)
 		return
 	}
 
-	toDate, err := time.Parse("2006-01-02", req.ToDate)
+	toDate, err := time.Parse("2006-01-02", c.DefaultQuery("to_date", ""))
 	if err != nil {
 		c.Status(500)
 		return
@@ -51,27 +46,27 @@ func GetCreatedUserStats(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"data": list,
+		"data": gin.H{
+			"stats": list,
+		},
 	})
 	/*
 
-	tsize, s := getTsizeAndNPoints(req.Time)
+		tsize, s := getTsizeAndNPoints(req.Time)
 
-	**/
+		**/
 }
 
-
 func GetCreatedProductStats(c *gin.Context) {
-	req := RequestStats{}
-	c.Bind(&req)
 
-	fromDate, err := time.Parse("2006-01-02", req.FromDate)
+	fromDate, err := time.Parse("2006-01-02", c.DefaultQuery("from_date", ""))
 	if err != nil {
+		fmt.Print(err)
 		c.Status(500)
 		return
 	}
 
-	toDate, err := time.Parse("2006-01-02", req.ToDate)
+	toDate, err := time.Parse("2006-01-02", c.DefaultQuery("to_date", ""))
 	if err != nil {
 		c.Status(500)
 		return
@@ -101,8 +96,9 @@ func GetCreatedProductStats(c *gin.Context) {
 
 	}
 
-	c.JSON(200, list)
 	c.JSON(200, gin.H{
-		"data": list,
+		"data": gin.H{
+			"stats": list,
+		},
 	})
 }
