@@ -1,4 +1,6 @@
 <template>
+  <va-button @click="newTicket()" class="mr-4 mt-2 align-self--end" icon="confirmation_number">
+  </va-button>
   <div class="list">
     <ProductElement v-for="p in products" :key="p.slug" :data="p"></ProductElement>
     
@@ -10,6 +12,8 @@
 import { ref } from 'vue';
 import { useProducts } from '../composables/useProducts'
 import ProductElement from '../components/shop/ProductElement.vue'
+import useEmitter from '../composables/useEmitter';
+import RequestProductVue from '../components/shop/modal/tickets/RequestProduct.vue';
 //import useEmitter from '../composables/useEmitter';
 //import ProductPreviewVue from '../components/shop/modal/ProductPreview.vue';
 
@@ -21,11 +25,17 @@ export default {
     const product = useProducts(ref('client-products'));
     product.fetchProducts();
     const { products, totalPages, page } = product;
+    const emitter = useEmitter();
+
+    function newTicket() {
+      emitter.emit('modal/open', {view: RequestProductVue})
+    }
 
     return {
       products,
       totalPages,
-      page
+      page,
+      newTicket
       //onView
     }
   }

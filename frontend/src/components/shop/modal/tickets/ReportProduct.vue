@@ -48,7 +48,7 @@
 
 <script>
 import { reactive, ref } from '@vue/reactivity';
-import { report } from '../../../services/products'
+import { reportTicket } from '../../../../services/products';
 export default {
   props: ['opened', 'dataM'],
   
@@ -58,12 +58,13 @@ export default {
     const state = reactive({
       title: '',
       message: '',
-      loading: false
+      loading: false,
+      suggestion: false
     })
 
     async function reportP(product) {
       state.loading = true;
-      await report(parseInt(product.id), state.title, state.message);
+      await reportTicket(parseInt(product.id), state.title, state.message);
       state.loading = false;
     }
 

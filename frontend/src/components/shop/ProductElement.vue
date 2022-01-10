@@ -9,7 +9,7 @@
       <va-card-title>{{ data.name }}</va-card-title>
       
       <va-card-content class="content">
-        Autor: {{ data.user.username }}
+        Autor: {{ data.user ? data.user.username : 'Ninguno' }}
         <b>{{ data.price  }}€</b>
         {{ data.description }}
         <va-button @click="onView(data)">View</va-button>
@@ -24,7 +24,7 @@
 <script>
 import useEmitter from '../../composables/useEmitter'
 import ProductPreviewVue from './modal/ProductPreview.vue';
-import ReportProductVue from './modal/ReportProduct.vue';
+import ReportProductVue from './modal/tickets/ReportProduct.vue';
 export default {
   props: ['data'], 
   emits: ['details'],

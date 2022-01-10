@@ -72,11 +72,11 @@
                 <template #cell(price)="{ source: price }">{{ price }}€</template>
                 <template #cell(user)="{ source: user }">
                     <va-button
-                        v-if="user.username"
+                        v-if="user && user.username"
                         color="#ffac0a"
                         gradient
                         @click="creatorPrev(user)"
-                        >{{ user.username }}</va-button
+                        >{{ user && user.username }}</va-button
                     >
                 </template>
                 <template #cell(status)="{ source: status }">

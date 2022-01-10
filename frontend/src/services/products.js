@@ -51,22 +51,26 @@ export async function del(slugs){
 }
 
 export async function status(slugs){
-    let res = await api.put('/staff/products/status', slugs);
-    return res.data.data;
+  let res = await api.put('/staff/products/status', slugs);
+  return res.data.data;
 }
 
 //------[ CLIENT ENDPOINTS ]------\\
 export async function clientList(page, status){
-    let res = await api.get('/user/product/list', {page: page, status: status});
-    return constructList(res.data);
+  let res = await api.get('/user/product/list', {page: page, status: status});
+  return constructList(res.data);
 }
 
 export async function detailsClient(slug){
-    let res = await api.get('user/details/' + slug );
-    return constructList(res.data);
+  let res = await api.get('user/details/' + slug );
+  return constructList(res.data);
 }
-
-export async function report(productId, title, message) {
-    let res = await api.post('/user/ticket/product/report', {title, message, productId});
-    return res.data;
+// Tickets
+export async function reportTicket(productId, title, message) {
+  let res = await api.post('/user/ticket/product/report', {title, message, productId});
+  return res.data;
+}
+export async function requestTicket(title, message) {
+  let res = await api.post('/user/ticket/product/request', {title, message});
+  return res.data;
 }
