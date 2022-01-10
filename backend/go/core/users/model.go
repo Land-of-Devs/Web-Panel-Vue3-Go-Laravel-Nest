@@ -170,9 +170,9 @@ func FindAllUsersPag(c *gin.Context) ([]UserModel, utils.PageType, error) {
 	var query string
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
-	if c.Query("search") != ""{
+	if c.Query("search") != "" {
 		query = "%" + c.Query("search") + "%"
-	}else {
+	} else {
 		query = "%%"
 	}
 	err := db.Scopes(utils.Paginate(page, pageSize)).Where("email LIKE ?", query).Find(&arrModel).Error
@@ -208,4 +208,22 @@ func FindAllUsersDateRange(fromDate time.Time, toDate time.Time) ([]UserModel, e
 	err := db.Where("created_at BETWEEN ? AND ?", fromDate, toDate).Find(&arrModel).Error
 
 	return arrModel, err
+}
+
+func GetUserCount() (int64, error) {
+	db := db.GetConnection()
+	var count int64
+
+	err := db.Model(&UserModel{}).Count(&count).Error
+
+	return count, err
+}
+
+func GetUserCountYear(year string) (int64, error) {
+	db := db.GetConnection()
+	var count int64
+
+	err := db.Model(&UserModel{}).Where("date_part('year', created_at) = ?", year).Count(&count).Error
+
+	return count, err
 }
