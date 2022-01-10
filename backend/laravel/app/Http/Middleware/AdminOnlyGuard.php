@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Domain\Interfaces\Users\UserEntity;
 use App\Traits\JWTUtilsTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -38,6 +39,7 @@ class AdminOnlyGuard
     }
 
     if ($now > $adminAccess) {
+      Cookie::queue(Cookie::forget('adminaccess'));
       throw new HttpException(Response::HTTP_UNAUTHORIZED);
     }
 

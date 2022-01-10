@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Contracts\Auth\Factory;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tymon\JWTAuth\JWT;
 use Tymon\JWTAuth\Http\Parser\Cookies;
@@ -35,6 +36,9 @@ class Authenticate extends Middleware
      */
     protected function unauthenticated($request, array $guards)
     {
+        Cookie::queue(Cookie::forget('adminaccess'));
+        Cookie::queue(Cookie::forget('userdata'));
+        Cookie::queue(Cookie::forget('session'));
         throw new AccessDeniedHttpException();
     }
 }

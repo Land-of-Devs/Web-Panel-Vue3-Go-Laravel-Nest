@@ -21,8 +21,8 @@ createApp(App)
 
 
 const oldVals = {
-  role: null,
-  adminaccess: null
+  role: store.getters['user/getRole'],
+  adminaccess: store.getters['adminaccess/getUntil']
 };
 
 /* Watch changes in the store to re-check current route guards */
