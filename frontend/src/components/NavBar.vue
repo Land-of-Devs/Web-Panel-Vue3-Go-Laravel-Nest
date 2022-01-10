@@ -18,7 +18,7 @@
         <va-button @click="signIn" text-color="primary" flat>Login</va-button>
       </va-navbar-item>
       <va-navbar-item v-if="role >= 2">
-        <router-link :to="{name: 'Panel'}">
+        <router-link :to="{name: 'Panel.Dashboard'}">
           <va-button text-color="primary" flat>Panel</va-button>
         </router-link>
       </va-navbar-item>

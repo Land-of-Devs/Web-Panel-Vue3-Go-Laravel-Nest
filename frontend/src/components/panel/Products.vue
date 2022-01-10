@@ -36,8 +36,16 @@
                     </va-button>
                 </div>
             </div>
+            <div class="row" v-if="isAdminUser && !hasAdminAccess">
+                <div class="flex xs6 flex-center text--bold">Admin features are disabled.</div>
+                <div class="flex xs6 flex-center">
+                    <va-button gradient @click="getAdminAccess()">
+                        Enable admin
+                    </va-button>
+                </div>
+            </div>
             <Selected
-                v-if="selectedItems.length > 0 && role == 3"
+                v-if="selectedItems.length > 0 && hasAdminAccess"
                 v-on:confirm="selectAction($event)"
                 :selected="selected"
             />
@@ -49,7 +57,7 @@
                 :items="list"
                 :columns="columns"
                 :current-page="page"
-                :selectable="role == 3"
+                :selectable="hasAdminAccess"
                 v-model="selectedItems"
                 :clickable="true"
                 :loading="loading"
@@ -81,7 +89,8 @@
                     <va-button
                         color="danger"
                         gradient
-                        v-if="role == 3"
+                        v-if="isAdminUser"
+                        :disabled="!hasAdminAccess"
                         @click="del(id)"
                         ><va-icon name="delete"
                     /></va-button>
@@ -110,6 +119,7 @@ import ProductCreateVue from "./modals/ProductCreate.vue";
 import Selected from "/src/components/global/shared/Selected.vue";
 import StatusBadge from "/src/components/global/shared/StatusBadge";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
     components: {
@@ -117,8 +127,11 @@ export default defineComponent({
         StatusBadge,
     },
     async setup() {
+        const $router = useRouter();
+        const $route = useRoute();
         const store = useStore();
-        const role = computed(() => store.getters["user/getRole"]);
+        const isAdminUser = computed(() => store.getters["user/getRole"] === 3);
+        const hasAdminAccess = computed(() => isAdminUser.value && !!store.getters['adminaccess/getUntil']);
         const val = validator;
         const emitter = useEmitter();
         const productType = ref("all-products");
@@ -211,6 +224,10 @@ export default defineComponent({
             await products.deleteProducts([slug]);
         }
 
+        function getAdminAccess() {
+            $router.replace('/panel/admin-access?to=' + encodeURIComponent($route.fullPath));
+        }
+
         return {
             productType,
             list,
@@ -226,7 +243,9 @@ export default defineComponent({
             selected,
             selectAction,
             del,
-            role,
+            isAdminUser,
+            hasAdminAccess,
+            getAdminAccess
         };
     },
 });

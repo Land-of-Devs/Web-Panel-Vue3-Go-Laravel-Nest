@@ -13,7 +13,6 @@ const privilegeGuard = (next, role) => {
 
 const adminAccessGuard = (to, from, next) => {
   if (!store.getters['adminaccess/getUntil']) {
-    console.log(to);
     next('/panel/admin-access?to=' + encodeURIComponent(to.fullPath));
   } else {
     next();
