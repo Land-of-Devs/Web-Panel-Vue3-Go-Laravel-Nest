@@ -125,3 +125,26 @@ func GetCountCreatedUsers(c *gin.Context) {
 		},
 	})
 }
+
+func GetCountCreatedProducts(c *gin.Context) {
+	var count int64
+	var err error
+
+	if c.Query("year") == "" {
+		count, err = products.GetProductCount()
+	} else {
+		count, err = products.GetProductCountYear(c.Query("year"))
+	}
+
+	if err != nil {
+		c.Status(500)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"data": gin.H{
+			"total": count,
+		},
+	})
+
+}

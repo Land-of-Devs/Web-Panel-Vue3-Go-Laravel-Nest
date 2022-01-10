@@ -12,4 +12,5 @@ func InitRoutes(r *gin.RouterGroup) {
 	ctx.GET("/created_users", stats.GetCreatedUserStats)
 	ctx.GET("/count_created_users", stats.GetCountCreatedUsers)
 	ctx.GET("/created_products", stats.GetCreatedProductStats)
+	ctx.GET("/count_created_products", stats.GetCountCreatedProducts)
 }

@@ -33,3 +33,21 @@ func FindAllProductsDateRange(fromDate time.Time, toDate time.Time) ([]ProductMo
 
 	return arrModel, err
 }
+
+func GetProductCount() (int64, error) {
+	db := db.GetConnection()
+	var count int64
+
+	err := db.Model(&ProductModel{}).Count(&count).Error
+
+	return count, err
+}
+
+func GetProductCountYear(year string) (int64, error) {
+	db := db.GetConnection()
+	var count int64
+
+	err := db.Model(&ProductModel{}).Where("date_part('year', created_at) = ?", year).Count(&count).Error
+
+	return count, err
+}
