@@ -49,4 +49,22 @@ body {
   z-index: 1000000000 !important;
 }
 
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  background: white;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 40px;
+  background: gray;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgb(65, 65, 65);
+}
+
 </style>
