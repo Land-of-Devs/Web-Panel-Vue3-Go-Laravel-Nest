@@ -45,6 +45,15 @@ func getMailClient() *mail.SMTPClient {
 }
 
 func mailSendLoop() {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Printf("error in mail queue: %v\n", err)
+		}
+
+		fmt.Println("Mail queue stopped, disabling mail sending.")
+		mailDisabled = true
+	}()
+
 	fmt.Println("Initialized mail queue.")
 	client := getMailClient()
 	for mail := range mailQueue {

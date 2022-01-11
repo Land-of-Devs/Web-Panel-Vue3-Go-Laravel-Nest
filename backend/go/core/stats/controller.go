@@ -90,9 +90,9 @@ func GetCreatedProductStats(c *gin.Context) {
 	fdu := fromDate.Unix()
 
 	for _, p := range productList {
-		if p.CreatorRefer != nil {
-			list[(p.CreatedAt.Unix()/dayseconds)-(fdu/dayseconds)]++
-		}
+		//if p.CreatorRefer != nil {
+		list[(p.CreatedAt.Unix()/dayseconds)-(fdu/dayseconds)]++
+		//}
 
 	}
 

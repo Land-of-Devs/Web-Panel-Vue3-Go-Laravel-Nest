@@ -25,6 +25,7 @@ class ProductFactory extends Factory
             'price' => random_int(10, 10000),
             'creator' => null,
             'image' => 'wp_dummy' . strval(random_int(1, 3)) . '.jpg',
+            'created_at' => time() - random_int(60 * 60 * 24, 60 * 60 * 24 * 11),
             'status' => 'Complete'
         ];
     }

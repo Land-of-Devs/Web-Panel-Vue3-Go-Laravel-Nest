@@ -19,7 +19,7 @@
                 <va-icon v-else name="dangerous" color="danger" />
             </div>
             <br />
-            <div>Joined: {{ format.date(user.joined) }}</div>
+            <div>Joined: {{ format.date(user.joined || user.created_at) }}</div>
             <br />
         </va-card-content>
         <va-card-actions>

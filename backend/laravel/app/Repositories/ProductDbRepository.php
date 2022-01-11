@@ -100,7 +100,7 @@ class ProductDbRepository implements ProductRepository
                     $toUpdate->getName() . '-' . $toUpdate->getId(),
                     'img/products',
                     $toUpdate->getImage()
-                ));
+                ) . '?v=' . time());
             }
             $toUpdate->fillProduct(self::cleanArray([
                 'description' => $product->description,
