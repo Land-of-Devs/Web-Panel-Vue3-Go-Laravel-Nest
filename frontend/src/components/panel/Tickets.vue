@@ -67,9 +67,6 @@
                     >
                     <div v-else>None</div>
                 </template>
-                <template #cell(role)="{ source: role }">
-                    <RoleBadge :role="role" />
-                </template>
                 <template #cell(id)="{ source: id }">
                     <va-button color="primary" gradient @click="ticketPrev(id)"
                         ><va-icon name="preview"

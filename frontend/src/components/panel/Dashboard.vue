@@ -10,7 +10,7 @@
           <va-date-input label="To" v-model="dates.toDate" />
         </div>
       </div>
-      <div class="row" v-if="isAdminUser && !hasAdminAccess">
+      <div class="row" v-if="hasRole(3) && !adminAccess">
         <div class="flex xs6 flex-center text--bold">Admin stats are hidden.</div>
         <div class="flex xs6 flex-center">
           <va-button gradient @click="getAdminAccess()">View admin stats</va-button>
@@ -27,7 +27,7 @@
       </va-card>
     </div>
     <div class="flex md6 xs12">
-      <va-card class="chart-widget" title="Products" v-if="hasAdminAccess">
+      <va-card class="chart-widget" title="Products" v-if="adminAccess">
         <va-card-content>
           <va-chart :data="productsChartData" type="line" />
         </va-card-content>
@@ -36,14 +36,14 @@
   </div>
   <div class="row">
     <div class="flex md12 xs12">
-      <va-card class="chart-widget" title="Users" v-if="hasAdminAccess">
+      <va-card class="chart-widget" title="Users" v-if="adminAccess">
         <va-card-content>
           <va-chart :data="usersChartData" type="line" />
         </va-card-content>
       </va-card>
     </div>
   </div>
-  <va-card v-if="hasAdminAccess">
+  <va-card v-if="adminAccess">
     <va-card-title>Totals statistics</va-card-title>
     <va-card-content>
       <div class="row">
@@ -59,7 +59,7 @@
       </div>
     </va-card-content>
   </va-card>
-  <div class="row" v-if="hasAdminAccess">
+  <div class="row" v-if="adminAccess">
     <div class="flex xs12">
       <va-card class="chart-widget" title="Totals">
         <va-card-content>
@@ -74,11 +74,11 @@
 <script>
 import VaChart from '/src/components/va-charts/VaChart';
 import { computed, defineComponent, reactive, ref, watch } from "vue";
-import { useStore } from "vuex";
 import { useStatistics } from "../../composables/useStatistics";
 import { toJSONDateString } from "../../utils/formatter";
 import { offsetDate } from '../../utils/date';
 import { useRoute, useRouter } from 'vue-router';
+import { hasAdminAccess, hasRole } from '../../utils/store';
 
 export default defineComponent({
   components: { VaChart },
@@ -87,10 +87,8 @@ export default defineComponent({
     const $route = useRoute();
 
     const stats = useStatistics();
-    const store = useStore();
 
-    const isAdminUser = computed(() => store.getters["user/getRole"] === 3);
-    const hasAdminAccess = computed(() => isAdminUser.value && !!store.getters['adminaccess/getUntil']);
+    const adminAccess = computed(hasAdminAccess);
 
     const ticketsChartData = ref({});
     const productsChartData = ref({});
@@ -200,7 +198,7 @@ export default defineComponent({
 
     await stats.tickets.fetch();
 
-    if (store.getters['user/getRole'] == 3 && store.getters['adminaccess/getUntil']) {
+    if (adminAccess.value) {
       await stats.products.fetch();
       await stats.users.fetch();
 
@@ -213,16 +211,15 @@ export default defineComponent({
     }
 
     return {
-      store,
       dates,
       totals,
       ticketsChartData,
       productsChartData,
       usersChartData,
       totalsChartData,
-      isAdminUser,
-      hasAdminAccess,
-      getAdminAccess
+      adminAccess,
+      getAdminAccess,
+      hasRole
     }
   }
 });

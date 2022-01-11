@@ -10,23 +10,23 @@
         </router-link>
       </va-navbar-item>
       <va-navbar-item>
-        <router-link :to="{name: 'Shop'}" v-if="role >= 1">
+        <router-link :to="{name: 'Shop'}" v-if="hasRole(1)">
           <va-button text-color="primary" icon="shopping_cart" flat></va-button>
         </router-link>
       </va-navbar-item>
-      <va-navbar-item  v-if="role == 0" >
+      <va-navbar-item  v-if="!isLoggedIn()" >
         <va-button @click="signIn" text-color="primary" flat>Login</va-button>
       </va-navbar-item>
-      <va-navbar-item v-if="role >= 2">
+      <va-navbar-item v-if="hasRole(2)">
         <router-link :to="{name: 'Panel.Dashboard'}">
           <va-button text-color="primary" icon="admin_panel_settings" flat></va-button>
         </router-link>
       </va-navbar-item>
-      <va-navbar-item v-if="role >= 1">
+      <va-navbar-item v-if="hasRole(1)">
         <va-button @click="newTicket()" icon="confirmation_number" text-color="primary" flat>
         </va-button>
       </va-navbar-item>
-      <va-navbar-item v-if="role != 0">
+      <va-navbar-item v-if="isLoggedIn()">
         <va-button @click="logOut()" text-color="primary" flat>
           ⠀⠀
           <va-icon name="meeting_room"></va-icon>
@@ -38,20 +38,16 @@
 </template>
 <script>
 
-import { computed } from 'vue';
-import { useStore } from 'vuex';
 import useEmitter from '../composables/useEmitter';
 import { useRoute } from 'vue-router';
 import SignInModalVue from './login/SignInModal.vue';
 import { signOut } from '../services/auth';
 import CreateProductVue from './shop/modal/tickets/CreateProduct.vue';
+import { isLoggedIn, hasRole } from '../utils/store';
 
 export default {
   setup() {
     const emitter = useEmitter();
-    const store = useStore();
-
-    const role = computed(() => store.getters['user/getRole']);
     const route = useRoute();
 
     function isInPanel() {
@@ -74,11 +70,11 @@ export default {
 
     return {
       signIn,
-      store,
-      role,
       isInPanel,
       logOut,
-      newTicket
+      newTicket,
+      isLoggedIn,
+      hasRole
     }
   }
 }

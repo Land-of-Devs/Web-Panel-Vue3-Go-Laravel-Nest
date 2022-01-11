@@ -17,7 +17,7 @@
                 </div>
             </div>
             <Selected
-                v-if="selectedItems.length > 0 && role == 3"
+                v-if="selectedItems.length > 0 && hasRole(3)"
                 v-on:confirm="selectAction($event)"
                 :selected="selected"
             />
@@ -29,7 +29,7 @@
                 :items="list"
                 :columns="columns"
                 :current-page="page"
-                :selectable="role == 3"
+                :selectable="hasRole(3)"
                 v-model="selectedItems"
                 :clickable="true"
                 :loading="loading"
@@ -67,7 +67,7 @@
                     <va-button
                         color="danger"
                         gradient
-                        v-if="role == 3"
+                        v-if="hasRole(3)"
                         @click="del(id)"
                         ><va-icon name="delete"
                     /></va-button>
@@ -89,13 +89,13 @@
 import * as validator from "/src/utils/validator";
 import * as formatter from "/src/utils/formatter";
 import { useUsers } from "/src/composables/useUsers";
-import { defineComponent, ref, toRefs, watch, computed } from "vue";
+import { defineComponent, ref, toRefs, watch } from "vue";
 import useEmitter from "/src/composables/useEmitter";
 import UserEditVue from "./modals/UserEdit.vue";
 import UserCreateVue from "./modals/UserCreate.vue";
 import Selected from "/src/components/global/shared/Selected.vue";
 import RoleBadge from "/src/components/global/shared/RoleBadge.vue";
-import { useStore } from "vuex";
+import { hasRole } from "/src/utils/store"
 
 export default defineComponent({
     components: {
@@ -103,8 +103,6 @@ export default defineComponent({
         RoleBadge,
     },
     async setup() {
-        const store = useStore();
-        const role = computed(() => store.getters["user/getRole"]);
         const val = validator;
         const format = formatter;
         const emitter = useEmitter();
@@ -112,6 +110,7 @@ export default defineComponent({
         const search = ref(users.search);
         const loading = ref(users.loading);
         const details = toRefs(users.details);
+        console.log(details.new)
         const newUser = ref({});
         const selected = ref({
             list: ["None", "Delete", "Verify"],
@@ -188,7 +187,6 @@ export default defineComponent({
 
         return {
             list,
-            role,
             search,
             loading,
             selected,
@@ -201,6 +199,7 @@ export default defineComponent({
             selectAction,
             del,
             format,
+            hasRole
         };
     },
 });

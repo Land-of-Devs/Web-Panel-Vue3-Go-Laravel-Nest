@@ -20,29 +20,37 @@
                 v-on:edit="state.edit = true"
                 v-on:close="$emit('close')"
                 :product="dataM.product.value"
-                :canEdit="true"
+                :canEdit="creator"
             />
         </template>
     </va-modal>
 </template>
 
 <script>
-import { reactive } from "vue";
+import { reactive, computed, ref } from "vue";
 import ProductForm from "../forms/ProductForm.vue";
 import ProductCard from "/src/components/global/cards/ProductCard.vue";
+import { hasAdminAccess, isCreator } from "/src/utils/store";
+
 export default {
     components: {
         ProductForm,
         ProductCard,
     },
     props: ["opened", "dataM"],
-    setup() {
+    setup(props) {
         const state = reactive({
             edit: false,
         });
-
+        const user = ref(props.dataM.product.value["user"]);
+        const creator = computed(
+            () =>
+                (user.value && isCreator(user.value["id"])) ||
+                hasAdminAccess()
+        );
         return {
             state,
+            creator,
         };
     },
 };

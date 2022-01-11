@@ -1,3 +1,3 @@
 export interface JWTPayload {
-  AdminAccessToken: number
+    AdminAccessToken: number
 }

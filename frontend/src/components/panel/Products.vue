@@ -30,14 +30,18 @@
                         ]"
                     />
                 </div>
-                <div class="flex flex-center xs3 md2 lg2 offset--lg6 btn-actions">
+                <div
+                    class="flex flex-center xs3 md2 lg2 offset--lg6 btn-actions"
+                >
                     <va-button color="success" gradient @click="productCrt()">
                         <va-icon name="note_add" />
                     </va-button>
                 </div>
             </div>
-            <div class="row" v-if="isAdminUser && !hasAdminAccess">
-                <div class="flex xs6 flex-center text--bold">Admin features are disabled.</div>
+            <div class="row" v-if="hasRole(3) && !adminAccess">
+                <div class="flex xs6 flex-center text--bold">
+                    Admin features are disabled.
+                </div>
                 <div class="flex xs6 flex-center">
                     <va-button gradient @click="getAdminAccess()">
                         Enable admin
@@ -45,7 +49,7 @@
                 </div>
             </div>
             <Selected
-                v-if="selectedItems.length > 0 && hasAdminAccess"
+                v-if="selectedItems.length > 0 && adminAccess"
                 v-on:confirm="selectAction($event)"
                 :selected="selected"
             />
@@ -57,7 +61,7 @@
                 :items="list"
                 :columns="columns"
                 :current-page="page"
-                :selectable="hasAdminAccess"
+                :selectable="!!adminAccess"
                 v-model="selectedItems"
                 :clickable="true"
                 :loading="loading"
@@ -67,9 +71,14 @@
                 <template #header(id)>Actions</template>
                 <template #header(image)>Product</template>
                 <template #cell(image)="{ source: image }">
-                    <va-avatar square :src="'/api/data/img/products/' + image" />
+                    <va-avatar
+                        square
+                        :src="'/api/data/img/products/' + image"
+                    />
                 </template>
-                <template #cell(price)="{ source: price }">{{ price }}€</template>
+                <template #cell(price)="{ source: price }"
+                    >{{ price }}€</template
+                >
                 <template #cell(user)="{ source: user }">
                     <va-button
                         v-if="user && user.username"
@@ -90,8 +99,8 @@
                     <va-button
                         color="danger"
                         gradient
-                        v-if="isAdminUser"
-                        :disabled="!hasAdminAccess"
+                        v-if="hasRole(3)"
+                        :disabled="!adminAccess"
                         @click="del(id)"
                         ><va-icon name="delete"
                     /></va-button>
@@ -119,8 +128,8 @@ import ProductEditVue from "./modals/ProductEdit.vue";
 import ProductCreateVue from "./modals/ProductCreate.vue";
 import Selected from "/src/components/global/shared/Selected.vue";
 import StatusBadge from "/src/components/global/shared/StatusBadge";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+import { hasAdminAccess, hasRole } from "../../utils/store";
 
 export default defineComponent({
     components: {
@@ -130,9 +139,7 @@ export default defineComponent({
     async setup() {
         const $router = useRouter();
         const $route = useRoute();
-        const store = useStore();
-        const isAdminUser = computed(() => store.getters["user/getRole"] === 3);
-        const hasAdminAccess = computed(() => isAdminUser.value && !!store.getters['adminaccess/getUntil']);
+        const adminAccess = computed(hasAdminAccess);
         const val = validator;
         const emitter = useEmitter();
         const productType = ref("all-products");
@@ -244,9 +251,9 @@ export default defineComponent({
             selected,
             selectAction,
             del,
-            isAdminUser,
-            hasAdminAccess,
-            getAdminAccess
+            adminAccess,
+            getAdminAccess,
+            hasRole
         };
     },
 });

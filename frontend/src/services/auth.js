@@ -15,3 +15,7 @@ export function signOut(form) {
 export function adminUpgrade(form) {
   return api.post('/admin/auth/admin-session-upgrade', form);
 }
+
+export function verify(params) {
+  return api.get('/user/access/verify', params);
+}

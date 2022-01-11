@@ -18,7 +18,7 @@ import { ProductEntity } from './entities/product.entity';
   providers: [
     UserService,
     TicketService,
-    ProductService
+    ProductService,
   ],
   exports: [
     TypeOrmModule,

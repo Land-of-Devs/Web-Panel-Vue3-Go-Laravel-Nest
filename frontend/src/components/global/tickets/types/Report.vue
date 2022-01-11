@@ -1,5 +1,5 @@
 <template>
-<div> - ID Products:  [ {{ content.id }} ]</div>
+<div> - ID Products:  [ {{ content.productId }} ]</div>
 <div> - Message:  [ {{ content.message }} ]</div>
 </template>
 

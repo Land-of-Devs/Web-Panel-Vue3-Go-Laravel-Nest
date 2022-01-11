@@ -11,7 +11,9 @@
                     <va-sidebar-item-title class="sidebar-title">
                         Panel Admin
                     </va-sidebar-item-title>
-                    <va-sidebar-item-title class="sidebar-title sidebar-title-minimized">
+                    <va-sidebar-item-title
+                        class="sidebar-title sidebar-title-minimized"
+                    >
                         PA
                     </va-sidebar-item-title>
                 </va-sidebar-item-content>
@@ -38,7 +40,7 @@
                 </va-sidebar-item-content>
             </va-sidebar-item>
 
-            <va-sidebar-item :to="{ name: 'Panel.Users' }" v-if="role >= 3">
+            <va-sidebar-item :to="{ name: 'Panel.Users' }" v-if="hasRole(3)">
                 <va-sidebar-item-content>
                     <va-icon name="person" />
                     <va-sidebar-item-title> Users </va-sidebar-item-title>
@@ -59,7 +61,9 @@
                 <template #fallback>
                     <va-card class="flex xs12 md6 offset--md3">
                         <va-card-content>
-                            <va-progress-bar indeterminate>Loading...</va-progress-bar>
+                            <va-progress-bar indeterminate
+                                >Loading...</va-progress-bar
+                            >
                         </va-card-content>
                     </va-card>
                 </template>
@@ -69,15 +73,11 @@
 </template>
 
 <script>
-import { computed } from "vue";
-import { useStore } from "vuex";
+import { hasRole } from "/src/utils/store";
 export default {
     setup() {
-        const store = useStore();
-        const role = computed(() => store.getters["user/getRole"]);
-
         return {
-            role,
+            hasRole,
         };
     },
 };
@@ -114,24 +114,22 @@ export default {
 }
 
 .sidebar-title-minimized {
-  display: none;
+    display: none;
 }
 
 @media screen and (max-width: 576px) {
+    .va-sidebar {
+        width: min-content !important;
+    }
 
-  .va-sidebar {
-    width: min-content!important;
-  }
+    .va-sidebar-item-title {
+        display: none;
+    }
 
-  .va-sidebar-item-title {
-    display: none;
-  }
-
-  .sidebar-title-minimized {
-    display: block;
-  }
+    .sidebar-title-minimized {
+        display: block;
+    }
 }
-
 </style>
 
 <style lang="scss">

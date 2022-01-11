@@ -28,7 +28,7 @@
 import { defineComponent, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { adminUpgrade } from "../../services/auth";
-import { store } from "../../store";
+import { hasAdminAccess } from "../../utils/store";
 import * as validator from "/src/utils/validator";
 
 export default defineComponent({
@@ -57,7 +57,7 @@ export default defineComponent({
       }
     }
 
-    if (store.getters['adminaccess/getUntil']) {
+    if (hasAdminAccess()) {
       redirectToTarget();
     }
 
