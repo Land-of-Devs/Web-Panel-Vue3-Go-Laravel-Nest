@@ -20,7 +20,7 @@ class TicketsTable extends Migration
                     $table->id();
                     $table->string('title');
                     $table->enum('type', config('enums.ticket_types'));
-                    $table->uuid('creator');
+                    $table->uuid('creator')->nullable();
                     $table->foreign('creator')->references('id')->on('users')->onDelete('cascade');
                     $table->json('content');
                     $table->enum('status', config('enums.item_status'))->default(config('enums.item_status.PENDING'));
