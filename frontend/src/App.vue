@@ -45,5 +45,8 @@ body {
 .va-toast {
     z-index: 100000 !important;
 }
+.va-dropdown__content-wrapper {
+  z-index: 1000000000 !important;
+}
 
 </style>

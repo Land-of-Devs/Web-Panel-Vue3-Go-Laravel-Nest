@@ -7,7 +7,7 @@
             <br />
             <div>
                 Creator:
-                {{ ticket.user.username }}#{{ format.hash(ticket.user.hash) }}
+                {{ ticket.user ? ticket.user.username + '#' + format.hash(ticket.user.hash) : 'None' }}
             </div>
             <br />
             <div>Status: <StatusBadge :status="ticket.status" /></div>

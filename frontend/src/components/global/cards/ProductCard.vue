@@ -14,7 +14,7 @@
 
             <div>
                 Creator:
-                {{ product.user.username }}#{{ format.hash(product.user.hash) }}
+                {{ product.user ? product.user.username + '#' + format.hash(product.user.hash) : 'None' }}
             </div>
             <br />
             <div>Status: <StatusBadge :status="product.status" /></div>

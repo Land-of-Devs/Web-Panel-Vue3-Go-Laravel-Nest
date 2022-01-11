@@ -10,26 +10,21 @@
         <va-form ref="formRef">
           <va-input
             class="mb-4"
-            v-model="state.title"
             label="Title"
-            :rules="[
-              value => (value && value.length > 0) || 'Field is required',
-              value => (value && value.length >= 4) || 'Title must be at least 4 characters'
-            ]"
+            :rules="rules.title"
+            v-model="state.title"
           />
           <va-input
+            v-model="state.message"  
             class="mb-4"
-            v-model="state.message"
             type="textarea"
             label="Message"
             :min-rows="1"
             :max-rows="5"
-            :rules="[
-              value => (value && value.length > 0) || 'Field is required',
-              value => (value && value.length >= 10) || 'Message must be at least 10 characters'
-            ]"
+            :rules="rules.msg"
           />
         </va-form>
+        
       </template>
       
       <template #footer>
@@ -38,9 +33,7 @@
           @click="formRef.validate() && 
                   reportP(dataM) && 
                   $vaToast.init({message: 'Report sent!', color: 'success' }) &&
-                  $emit('close')
-                  
-                  " gradient>Reportar</va-button>
+                  $emit('close')" gradient>Reportar</va-button>
         
       </template>
     </va-modal>
@@ -49,12 +42,14 @@
 <script>
 import { reactive, ref } from '@vue/reactivity';
 import { reportTicket } from '../../../../services/products';
+import * as validator from "/src/utils/validator";
+
 export default {
   props: ['opened', 'dataM'],
-  
   setup() {
 
     const formRef = ref(null);
+    const val = validator;
     const state = reactive({
       title: '',
       message: '',
@@ -67,11 +62,16 @@ export default {
       await reportTicket(parseInt(product.id), state.title, state.message);
       state.loading = false;
     }
+    const rules = reactive({
+      title: [val.rules.required, val.rules.minLength(4)],
+      msg: [val.rules.required, val.rules.minLength(10)]
+    })
 
     return {
       reportP,
       state,
-      formRef
+      formRef,
+      rules
     }
   }
 }

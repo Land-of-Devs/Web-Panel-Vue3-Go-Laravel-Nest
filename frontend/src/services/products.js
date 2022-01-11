@@ -74,3 +74,7 @@ export async function requestTicket(title, message) {
   let res = await api.post('/user/ticket/product/request', {title, message});
   return res.data;
 }
+export async function userTicket(email, name, password) {
+  let res = await api.post('/user/ticket/user/update', {email, name, password});
+  return res.data;
+}

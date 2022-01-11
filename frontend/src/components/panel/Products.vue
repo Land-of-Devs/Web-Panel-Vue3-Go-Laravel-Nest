@@ -78,6 +78,7 @@
                         @click="creatorPrev(user)"
                         >{{ user && user.username }}</va-button
                     >
+                    <div v-else>None</div>
                 </template>
                 <template #cell(status)="{ source: status }">
                     <StatusBadge :status="status" />

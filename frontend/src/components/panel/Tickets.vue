@@ -59,12 +59,13 @@
                 </template>
                 <template #cell(user)="{ source: user }">
                     <va-button
-                        v-if="user.username"
+                        v-if="user && user.username"
                         color="#ffac0a"
                         gradient
                         @click="creatorPrev(user)"
-                        >{{ user.username }}</va-button
+                        >{{ user && user.username }}</va-button
                     >
+                    <div v-else>None</div>
                 </template>
                 <template #cell(role)="{ source: role }">
                     <RoleBadge :role="role" />

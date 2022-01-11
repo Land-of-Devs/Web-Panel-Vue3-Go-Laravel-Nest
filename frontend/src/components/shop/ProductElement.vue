@@ -12,8 +12,8 @@
         Autor: {{ data.user ? data.user.username : 'Ninguno' }}
         <b>{{ data.price  }}€</b>
         {{ data.description }}
-        <va-button @click="onView(data)">View</va-button>
-        <va-button @click="onReport(data)">Report</va-button>
+        <va-button @click="onView(data)" icon="visibility">View</va-button>
+        <va-button @click="onReport(data)" icon="flag" color="danger">Report</va-button>
       </va-card-content>
     </va-card>
   </div>

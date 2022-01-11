@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'description' => 'description product',
             'price' => random_int(10, 10000),
             'creator' => null,
-            'image' => 'dummy' . strval(random_int(1, 3)) . '.jpg',
+            'image' => 'wp_dummy' . strval(random_int(1, 3)) . '.jpg',
             'status' => 'Complete'
         ];
     }

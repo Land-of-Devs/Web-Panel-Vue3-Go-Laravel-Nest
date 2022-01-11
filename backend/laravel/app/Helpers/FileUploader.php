@@ -25,7 +25,7 @@ class FileUploader
     public static function delete($name, $dir)
     {
         $path = '/app_data/'.$dir.'/'.$name;
-        if (File::exists($path)) {
+        if (File::exists($path) && !str_starts_with($name, 'wp_dummy')) {
             File::delete($path);
         }
     }
