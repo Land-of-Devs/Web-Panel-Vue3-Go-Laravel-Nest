@@ -1,10 +1,12 @@
+import { Req } from '@nestjs/common';
 import { SigninDto } from './dto/signin.dto';
-import { Body, Controller, ForbiddenException, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { SignupDto } from './dto/signup.dto';
 import { Response } from 'express';
 import { AccessService } from './access.service';
 // import { MailService} from '../mail/mail.service';
 import { AppCookieOptions } from 'src/jwt.conf';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('access')
 export class AccessController {
@@ -33,6 +35,22 @@ export class AccessController {
 
         // await this.mailService.sendUserVerify(user, token);
         res.json({ ok: true });
+    }
+
+    @Get('google')
+    @UseGuards(AuthGuard('google'))
+    async googleAuth(@Req() req) {}
+
+    @Get('google/redirect')
+    @UseGuards(AuthGuard('google'))
+    async googleAuthRedirect(@Res() res: Response, @Req() req) {
+        const user = await this.accessService.googleLogin(req.user);
+        const token = this.accessService.generateAccessToken(user.id);
+
+        res.cookie('session', token, AppCookieOptions.jwt);
+        res.cookie('userdata', JSON.stringify(user), AppCookieOptions.userdata);
+
+        res.redirect('/');
     }
 
     @Get('signout')

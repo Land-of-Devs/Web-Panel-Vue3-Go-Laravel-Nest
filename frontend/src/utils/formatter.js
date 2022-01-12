@@ -18,3 +18,9 @@ export const hash = (hash) => {
         digits === 3 ? '0' + hash :
         hash
 }
+
+export const getUserImage = (user) => {
+    return user.image
+        ? ((user.image.startsWith('http') ? '' : '/api/data/img/users/') + user.image)
+        : '/api/data/img/users/default.png';
+};

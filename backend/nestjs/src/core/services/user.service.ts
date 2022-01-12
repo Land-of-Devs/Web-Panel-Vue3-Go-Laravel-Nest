@@ -25,8 +25,8 @@ export class UserService {
         return user;
     }
 
-    async create(email: string, username: string, password: string): Promise<UserEntity> {
-        const newUser = new UserEntity(email, username, password);
+    async create(email: string, username: string, password: string, verified: boolean = false, image: string = null): Promise<UserEntity> {
+        const newUser = new UserEntity(email, username, password, verified, image);
 
         try {
             await newUser.save();

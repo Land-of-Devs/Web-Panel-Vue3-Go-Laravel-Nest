@@ -3,6 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { UserEntity } from "src/core/entities/user.entity";
 import { JWTPayload } from "src/core/interfaces/jwt.interface";
 import { UserService } from "src/core/services/user.service";
+import { GoogleUser } from "src/core/strategies/google.strategy";
 import { SigninDto } from "./dto/signin.dto";
 import { SignupDto } from "./dto/signup.dto";
 
@@ -15,6 +16,24 @@ export class AccessService {
         private jwtService: JwtService
     ) {
 
+    }
+
+    async googleLogin(gUser: GoogleUser): Promise<UserEntity> {
+        if (!gUser) {
+            throw new ForbiddenException('No user from google'); 
+        }
+
+        const user = await this.usersService.getByEmail(gUser.email);
+        if (user) {
+            return user;
+        }
+
+        let name = gUser.firstName + (gUser.lastName ? ' ' + gUser.lastName : '');
+        if (name.length > 24) {
+            name = gUser.firstName.slice(0, 24);
+        }
+
+        return await this.usersService.create(gUser.email, name, '', true/*, gUser.picture*/);
     }
 
     async validateEmailPassword(dto: SigninDto): Promise<UserEntity> {

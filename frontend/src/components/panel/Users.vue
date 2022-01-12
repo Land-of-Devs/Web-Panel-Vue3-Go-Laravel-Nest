@@ -40,14 +40,8 @@
                 <template #header(image)>Avatar</template>
                 <template #cell(image)="{ source: image }">
                     <va-avatar
-                        v-if="image"
                         square
-                        :src="'/api/data/img/users/' + image"
-                    />
-                    <va-avatar
-                        v-else
-                        square
-                        :src="'/api/data/img/users/default.png'"
+                        :src="format.getUserImage({image})"
                     />
                 </template>
                 <template #cell(hash)="{ source: hash }"

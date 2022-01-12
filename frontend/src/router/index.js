@@ -30,6 +30,7 @@ const routes = [
     {
         path: '/shop',
         name: 'Shop',
+        beforeEnter: (to, from, next) => privilegeGuard(next, 1),
         component: Shop
     },
     {

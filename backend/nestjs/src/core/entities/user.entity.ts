@@ -12,16 +12,17 @@ export enum UserRole {
 @Entity({name: 'users'})
 export class UserEntity extends BaseEntity {
 
-  constructor(email: string, username: string, password: string) {
+  constructor(email: string, username: string, password: string, verified: boolean = false, image: string = null) {
     super();
     this.id = randomUUID();
     this.created_at = new Date();
     this.email = email;
     this.username = username;
+    this.image = image;
     this.hash = null;
     this.password = password;
     this.role = UserRole.USER;
-    this.verify = false;
+    this.verify = verified;
     this.two_step_secret = null;
   }
 

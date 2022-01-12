@@ -1,11 +1,7 @@
 <template>
     <va-card>
         <va-card-title>{{ user.id }}</va-card-title>
-        <va-image
-            v-if="user.image"
-            :src="'/api/data/img/users/' + user.image"
-        />
-        <va-image v-else :src="'/api/data/img/users/default.png'" />
+        <va-image :src="format.getUserImage(user)"/>
         <va-card-content>
             <div>User: {{ user.username }}#{{ format.hash(user.hash) }}</div>
             <br />

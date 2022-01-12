@@ -21,12 +21,22 @@
         @keyup.enter="formRef.validate() && signIn()"
       ></va-input>
       <div class="no-account">¿You don't have an account? <span @click="goSignUp()">Sign up</span></div>
-
     </va-form>
 
     <template #footer>
-      <va-button text-color="primary" class="mr-1" @click="$emit('close')" flat>Cancel</va-button>
-      <va-button :loading="state.loading" text-color="white" class="ml-1" @click="formRef.validate() && signIn()" gradient>Sign in</va-button>
+      <div>
+        <div class="row mb-2">
+          <div class="flex flex-center xs12">
+            <va-button text-color="primary" @click="proceedGoogleLogin()" flat>
+              Sign in with Google
+            </va-button>
+          </div>
+        </div>
+        <div class="row">
+          <va-button text-color="primary" class="mr-1" @click="$emit('close')" flat>Cancel</va-button>
+          <va-button :loading="state.loading" text-color="white" class="ml-1" @click="formRef.validate() && signIn()" gradient>Sign in</va-button>
+        </div>
+      </div>
     </template>
   </va-modal>
 </template>
@@ -78,12 +88,17 @@ export default {
     function goSignUp() {
       emitter.emit('modal/open', {view: SignUpModalVue});
     }
+
+    function proceedGoogleLogin() {
+      window.location.href = '/api/user/access/google';
+    }
     
     return {
       signIn,
       goSignUp,
       state,
-      formRef
+      formRef,
+      proceedGoogleLogin
     }
   }
 }

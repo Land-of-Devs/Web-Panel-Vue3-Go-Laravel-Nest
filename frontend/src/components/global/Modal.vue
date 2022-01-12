@@ -38,3 +38,12 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@media (max-width: 576px) {
+    .va-modal--mobile-fullscreen {
+        top: 0;
+        left: 0;
+    }
+}
+</style>
