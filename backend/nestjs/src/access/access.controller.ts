@@ -4,7 +4,7 @@ import { Body, Controller, ForbiddenException, Get, Param, Post, Res, UseGuards 
 import { SignupDto } from './dto/signup.dto';
 import { Response } from 'express';
 import { AccessService } from './access.service';
-// import { MailService} from '../mail/mail.service';
+import { MailService } from '../mail/mail.service';
 import { AppCookieOptions } from 'src/jwt.conf';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -13,7 +13,7 @@ export class AccessController {
 
     constructor(
         private accessService: AccessService,
-        // private mailService: MailService
+        private mailService: MailService
     ) {
     }
 
@@ -21,10 +21,8 @@ export class AccessController {
     async signin(@Body() signinDto: SigninDto, @Res() res: Response) {
         const user = (await this.accessService.validateEmailPassword(signinDto)).serialize();
         const token = this.accessService.generateAccessToken(user.id);
-
         res.cookie('session', token, AppCookieOptions.jwt);
         res.cookie('userdata', JSON.stringify(user), AppCookieOptions.userdata);
-
         res.json({ ok: true });
     }
 
@@ -32,8 +30,11 @@ export class AccessController {
     async signup(@Body() signupDto: SignupDto, @Res() res: Response) {
         const user = (await this.accessService.createUser(signupDto)).serialize();
         const token = this.accessService.generateVerifyToken(user.id);
+        this.mailService.sendUserVerify(user, token)
+        .catch(e => {
+            console.log('Error sending mail', e);
+        });
 
-        // await this.mailService.sendUserVerify(user, token);
         res.json({ ok: true });
     }
 
@@ -61,13 +62,12 @@ export class AccessController {
         res.end();
     }
 
-    @Get('verify')
+    @Get('verify/:token')
     async verify(@Param('token') tkn: string, @Res() res: Response) {
         const user = (await this.accessService.verifyUser(tkn))
         const token = this.accessService.generateAccessToken(user.id);
         res.cookie('session', token, AppCookieOptions.jwt);
         res.cookie('userdata', JSON.stringify(user), AppCookieOptions.userdata);
-
         res.json({ ok: true });
     }
 }

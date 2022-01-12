@@ -11,6 +11,7 @@ import dbconf from './db.conf';
 import { CoreModule } from './core/core.module';
 import { ProductModule } from './product/product.module';
 import { AppJWTModuleOptions } from './jwt.conf';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AppJWTModuleOptions } from './jwt.conf';
     AccessModule,
     TicketModule,
     ProductModule,
+    MailModule,
     JwtModule.register(AppJWTModuleOptions)
   ],
 

@@ -1,4 +1,5 @@
 <template>
+    <template v-if="setToaster($vaToast)"></template>
     <va-modal
         title="Sign up"
         :modelValue="opened"
@@ -72,6 +73,7 @@ import SignInModalVue from "./SignInModal.vue";
 
 export default {
     props: ["opened"],
+    emits: ["close"],
     setup() {
         const formRef = ref(null);
         const state = reactive({
@@ -84,13 +86,21 @@ export default {
             },
         });
 
+        const toaster = ref(null);
+
         const emitter = useEmitter();
         //const store = useStore();
 
-        function signUp() {
+        async function signUp() {
             state.loading = true;
-            auth.signUp(state.form)
+            await auth
+                .signUp(state.form)
                 .then(() => {
+                    toaster.value.init({
+                        message: 'User was Verify!',
+                        color: 'success',
+                        title: 'Verify:'
+                    });
                     emitter.emit("modal/close");
                 })
                 .catch((e) => {
@@ -115,6 +125,7 @@ export default {
             goSignIn,
             state,
             formRef,
+            setToaster(t) { toaster.value = t; }
         };
     },
 };

@@ -1,9 +1,10 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserEntity } from "src/core/entities/user.entity";
 import { JWTPayload } from "src/core/interfaces/jwt.interface";
 import { UserService } from "src/core/services/user.service";
 import { GoogleUser } from "src/core/strategies/google.strategy";
+import { MailService } from "src/mail/mail.service";
 import { SigninDto } from "./dto/signin.dto";
 import { SignupDto } from "./dto/signup.dto";
 
@@ -13,7 +14,8 @@ export class AccessService {
 
     constructor(
         private usersService: UserService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private mailService: MailService,
     ) {
 
     }
@@ -42,7 +44,9 @@ export class AccessService {
             const valid = await user.validatePassword(dto.password);
 
             if (valid && !user.verify) {
-                throw new ForbiddenException('User not verified!');
+                const token = this.generateVerifyToken(user.id);
+                await this.mailService.sendUserVerify(user, token);
+                throw new ForbiddenException(`This account isn't verify, we sent an email with a new verification!`);
             } else if (valid) {
                 return user;
             }
@@ -55,12 +59,17 @@ export class AccessService {
         return await this.usersService.create(dto.email, dto.username, dto.password);
     }
 
-    async verifyUser(id: string) {
-        let user = await this.usersService.getByUUID(id);
-        if (user) {
-            return await this.usersService.verify(user);
-        } else {
-            throw new NotFoundException();
+    async verifyUser(token: string) {
+        try {
+            const payload = this.jwtService.verify(token, { secret: process.env.JWT_VERIFYPHRASE })
+            let user = await this.usersService.getByUUID(payload.id);
+            if (user) {
+                return await this.usersService.verify(user);
+            } else {
+                throw new NotFoundException('User not found!');
+            }
+        } catch (e) {
+            throw new ForbiddenException('Token is Invalid!');
         }
     }
 
@@ -73,10 +82,7 @@ export class AccessService {
     }
 
     generateVerifyToken(id: string) {
-        return this.jwtService.sign({
-            subject: id,
-            secret: process.env.JWT_VERIFY
-        });
+        return this.jwtService.sign({ id: id }, { secret: process.env.JWT_VERIFYPHRASE, expiresIn: '20m' });
     }
 
 }

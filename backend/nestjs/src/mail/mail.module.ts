@@ -1,41 +1,37 @@
-// import { MailerModule } from '@nestjs-modules/mailer';
-// import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Global, Module } from '@nestjs/common';
-// import { MailService } from './mail.service';
-// import { join } from 'path';
-// import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailService } from './mail.service';
+import { join } from 'path';
 
 @Global()
 @Module({
     imports: [
-        // MailerModule.forRootAsync({
-        //     // imports: [ConfigModule], // import module if not enabled globally
-        //     useFactory: async (config: ConfigService) => ({
-        //         // transport: config.get("MAIL_TRANSPORT"),
-        //         // or
-        //         transport: {
-        //             host: config.get('MAIL_HOST'),
-        //             secure: false,
-        //             auth: {
-        //                 user: config.get('MAIL_USER'),
-        //                 pass: config.get('MAIL_PASSWORD'),
-        //             },
-        //         },
-        //         defaults: {
-        //             from: `"No Reply" <${config.get('MAIL_FROM')}>`,
-        //         },
-        //         template: {
-        //             dir: join(__dirname, 'templates'),
-        //             adapter: new HandlebarsAdapter(),
-        //             options: {
-        //                 strict: true,
-        //             },
-        //         },
-        //     }),
-        //     inject: [ConfigService],
-        // }),
+        MailerModule.forRootAsync({
+            useFactory: async () => ({
+
+                transport: {
+                    host: process.env.WP_MAIL_HOST,
+                    secure: false,
+                    auth: {
+                        user: process.env.WP_MAIL_USER,
+                        pass: process.env.WP_MAIL_PASS,
+                    },
+                },
+                defaults: {
+                    from: `"No Reply" <${process.env.MAIL_FROM}>`,
+                },
+                template: {
+                    dir: join(__dirname, 'templates'),
+                    adapter: new HandlebarsAdapter(),
+                    options: {
+                        strict: true,
+                    },
+                },
+            }),
+        }),
     ],
-    // providers: [MailService],
-    // exports: [MailService],
+    providers: [MailService],
+    exports: [MailService],
 })
 export class MailModule { }

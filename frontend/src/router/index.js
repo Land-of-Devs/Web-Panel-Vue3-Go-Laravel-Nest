@@ -1,21 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
-import Shop from '../views/Shop.vue';
-import {verify} from '../services/auth';
 import { adminAccessGuard, privilegeGuard } from '../guards/access';
-
-const verifyUser = async (next, token) => {
-    console.log(token)
-    let user = false;
-    if (user) {
-        let user = await verify();
-        if(user){
-            console.log(user);
-            next('/shop')
-        }
-    }
-    next('/');
-}
 
 const routes = [
     {
@@ -25,13 +10,13 @@ const routes = [
     },
     {
         path: '/verify/:token',
-        beforeEnter: (to, from, next) => verifyUser(next, to.params.token)
+        component: () => import('../components/Verify.vue')
     },
     {
         path: '/shop',
         name: 'Shop',
         beforeEnter: (to, from, next) => privilegeGuard(next, 1),
-        component: Shop
+        component: () => import('../views/Shop.vue')
     },
     {
         path: '/panel',

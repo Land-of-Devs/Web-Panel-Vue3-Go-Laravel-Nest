@@ -69,6 +69,7 @@ export default {
       state.loading = true;
       auth.signIn(state.form)
       .then(() => {
+        
         emitter.emit('modal/close');
       })
       .catch(e => {
