@@ -16,7 +16,7 @@ Degree: Web Applications Development
 - [Web Panel](#web-panel)
 - [Index](#index)
 - [Introduction](#introduction)
-- [Installation](#installation)
+- [Other Documentation](#other-documentation)
 - [Content](#content)
   - [Navbar](#navbar)
   - [Home](#home)
@@ -35,9 +35,12 @@ What is Web Panel?
 
 It is a versatile platform with the power of managing tickets, products, users and their roles. Our team achieved an application to manage any kind of types mentioned before, making it the most reusable as possible. The platform can adjust to your necesities with minimun changes in the code.
 
-# Installation
+# Other Documentation
 Here you have a link with the installation tutorial: 
 [INSTALLATION](./INSTALLING.md#webpanel-install-and-configuration-steps).
+
+Design details of the application (in Spanish): 
+[DESIGN](./DESIGN.md).
 
 # Content
 
